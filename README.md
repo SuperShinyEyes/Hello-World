@@ -43,8 +43,8 @@ def some_func():
   pass
 ```
 
-#### [Mutation]("http://book.pythontips.com/en/latest/mutation.html")
-
+#### [Decorators](http://book.pythontips.com/en/latest/decorators.html)
+Whenever you assign a variable to another variable of mutable datatype, any changes to the data are reflected by both variables. The new variable is just an alias for the old variable. This is only true for mutable datatypes
 ```python
 def add_to(num, target=[]):
     target.append(num)
