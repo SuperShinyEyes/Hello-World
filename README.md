@@ -69,7 +69,7 @@ def add_to(element, target=None):
 
 ```
 
-#### [\__slots__]("http://tech.oyster.com/save-ram-with-python-slots/")
+#### [\__slots__](http://tech.oyster.com/save-ram-with-python-slots/)
 
 By default Python uses a dict to store an object’s instance attributes. Which is usually fine, and it allows fully dynamic things like setting arbitrary new attributes at runtime.
 
