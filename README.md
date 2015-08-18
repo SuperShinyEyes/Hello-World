@@ -44,7 +44,7 @@ def some_func():
 ```
 
 #### [Mutation]("http://book.pythontips.com/en/latest/mutation.html")
- Whenever you assign a variable to another variable of mutable datatype, any changes to the data are reflected by both variables. The new variable is just an alias for the old variable. This is only true for mutable datatypes
+Whenever you assign a variable to another variable of mutable datatype, any changes to the data are reflected by both variables. The new variable is just an alias for the old variable. This is only true for mutable datatypes
 ```python
 def add_to(num, target=[]):
     target.append(num)
@@ -70,6 +70,7 @@ def add_to(element, target=None):
 ```
 
 #### [\__slots__]("http://tech.oyster.com/save-ram-with-python-slots/")
+
 By default Python uses a dict to store an object’s instance attributes. Which is usually fine, and it allows fully dynamic things like setting arbitrary new attributes at runtime.
 
 However, for small classes that have a few fixed attributes known at “compile time”, the dict is a waste of RAM, and this makes a real difference when you’re creating a million of them. You can tell Python not to use a dict, and only allocate space for a fixed set of attributes, by settings \__slots__ on the class to a fixed list of attribute names:
