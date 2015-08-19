@@ -110,4 +110,4 @@ print i is j   # True, they're the same object
   1. generator function (has yield)
   2. generator expression `(i for i in [1,2,3])`
 * `xrange()` "is" a generator object
-* Generator also has `next()` method.
+* Generator also has `next()` method not `__next__`.
