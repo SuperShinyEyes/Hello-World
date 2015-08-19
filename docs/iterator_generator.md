@@ -43,16 +43,16 @@ for x in limited:                         # so safe to use for-loop on
 Both an iterable(has `__iter__()`) and iterator(has `__next__()`):
 ```python
 class fib:
-    def __init__(self):
-      self.prev = 0
-      self.curr = 1
-   def __iter__(self):
-      return self
-   def __next__(self):
-      value = self.curr
-      self.curr += self.prev
-      self.prev = value
-      return value
+  def __init__(self):
+    self.prev = 0
+    self.curr = 1
+ def __iter__(self):
+    return self
+ def __next__(self):
+    value = self.curr
+    self.curr += self.prev
+    self.prev = value
+    return value
 f = fib()
 print list(islice(f, 0, 10))
 # >>> [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
