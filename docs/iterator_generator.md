@@ -62,10 +62,10 @@ print list(islice(f, 0, 10))
 Generator version of fib():
 ```python
 def fib():
-    prev, curr = 0, 1
-    while True:
-      yield curr
-      prev, curr = curr, prev + curr
+  prev, curr = 0, 1
+  while True:
+    yield curr
+    prev, curr = curr, prev + curr
 f = fib()
 list(islice(f, 0, 10))
 # >>> [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
