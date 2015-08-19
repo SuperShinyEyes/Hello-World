@@ -129,3 +129,32 @@ y1 = iter(x)
 print y1.next()
 y2 = iter(y1)
 print y1 is y2
+
+lis = ['1','100','111','2']
+print max(lis, key=int)
+
+lis = [(1,'a'),(3,'c'), (4,'e'), (-1,'z')]
+print max(lis, lambda x: x[1])
+
+lis=['a', 'aa', 'aaa']
+print max(lis, key=len)
+
+from itertools import islice
+filename = "/Users/young/projects/Hello Python/README.md"
+
+def get_lines(filename):
+  with open(filename) as f:
+    for line in f:
+      if not line.startswith('#'):
+        yield line
+
+lines_list = list(get_lines(filename))
+lines_set = set(get_lines(filename))
+lines_tuple = tuple(get_lines(filename))
+
+longest_line = max(get_lines(filename), key=len)
+
+print longest_line
+longest_line = max(get_lines(filename), key=lambda x:len(x))
+print longest_line
+print list(islice(get_lines(filename), 0, 10))
