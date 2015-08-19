@@ -75,7 +75,6 @@ By default Python uses a dict to store an object’s instance attributes. Which 
 
 However, for small classes that have a few fixed attributes known at “compile time”, the dict is a waste of RAM, and this makes a real difference when you’re creating a million of them. You can tell Python not to use a dict, and only allocate space for a fixed set of attributes, by settings \__slots__ on the class to a fixed list of attribute names:
 
-**Warning:** Don’t prematurely optimize and use this everywhere! It’s not great for code maintenance, and it really only saves you when you have thousands of instances.
 ```python
 class Image(object):
     __slots__ = ['id', 'caption', 'url']
@@ -87,14 +86,134 @@ class Image(object):
         self._setup()
 
     # ... other methods ...
+cat = Image(1, "cat", "path/to/cat")
+cat.url = "new_path/to/cat"   # Works fine
+cat.age = 1                   # Raise an AttributeError
+cat.__dict__                  # Raise an AttributeError
+```
+**Warning:** Don’t prematurely optimize and use this everywhere! It’s not great for code maintenance, and it really only saves you when you have thousands of instances. This only runs on [new style classes](http://stackoverflow.com/a/54873/3067013).
+
+**Tip:** [PyPy](http://pypy.org/) automatically does \__slots__ and other optimization
+
+#### [collections.defaultdict](http://book.pythontips.com/en/latest/collections.html#defaultdict)
+```python
+from collections import defaultdict
+
+colours = (
+    ('Yasoob', 'Yellow'),
+    ('Ali', 'Blue'),
+    ('Arham', 'Green'),
+    ('Ali', 'Black'),
+    ('Yasoob', 'Red'),
+    ('Ahmed', 'Silver'),
+)
+
+favourite_colours = defaultdict(list)
+
+for name, colour in colours:
+    favourite_colours[name].append(colour)
+
+print(favourite_colours)
+
+# output
+# defaultdict(<type 'list'>,
+#    {'Arham': ['Green'],
+#     'Yasoob': ['Yellow', 'Red'],
+#     'Ahmed': ['Silver'],
+#     'Ali': ['Blue', 'Black']
+# })
+```
+Another use case like json tree:
+```python
+import collections
+tree = lambda: collections.defaultdict(tree)
+some_dict = tree()
+some_dict['colours']['favourite'] = "yellow"
+# Works fine
+
+import json
+print(json.dumps(some_dict))
+# Output: {"colours": {"favourite": "yellow"}}
 ```
 
-
-#### []("")
+#### [collections.Counter](http://book.pythontips.com/en/latest/collections.html#counter)
 ```python
+from collections import Counter
+
+colours = (
+    ('Yasoob', 'Yellow'),
+    ('Ali', 'Blue'),
+    ('Arham', 'Green'),
+    ('Ali', 'Black'),
+    ('Yasoob', 'Red'),
+    ('Ahmed', 'Silver'),
+)
+
+favs = Counter(name for name, colour in colours)
+print(favs)
+# Output: Counter({
+#    'Yasoob': 2,
+#    'Ali': 2,
+#    'Arham': 1,
+#    'Ahmed': 1
+# })
 ```
 
-
-#### []("")
 ```python
+with open('filename', 'rb') as f:
+    line_count = Counter(f)
+print(line_count)
+
+max_value = 0
+for k, v in line_count.iteritems():
+  if v > max_value:
+    max_value = v
+    max_pair = {k, v}
+
+print max_pair
+```
+
+#### [collections.deque](http://book.pythontips.com/en/latest/collections.html#deque)
+```python
+from collections import deque
+
+d = deque(range(5))
+print(len(d))
+# Output: 5
+
+d.popleft()
+# Output: 0
+
+d.pop()
+# Output: 4
+
+print(d)
+# Output: deque([1, 2, 3])
+```
+set maxlen
+```python
+d = deque(maxlen=30)
+d = deque([1,2,3,4,5])
+d.extendleft([0])
+d.extend([6,7,8])
+print(d)      # Output: deque([0, 1, 2, 3, 4, 5, 6, 7, 8])
+```
+#### [collections.namedtuple]()
+```python
+from collections import namedtuple
+
+Animal = namedtuple('Animal', 'name age type')
+perry = Animal(name="perry", age=31, type="cat")
+
+print(perry)             # Output: Animal(name='perry', age=31, type='cat')
+print(perry.name)        # Output: 'perry'
+print(perry[0])          # Output: 'perry'
+print(perry._asdict())   # Output: OrderedDict([('name', 'perry'), ('age', 31), ...
+```
+
+#### [enumerate](http://book.pythontips.com/en/latest/enumerate.html)
+```python
+my_list = ['apple', 'banana', 'grapes', 'pear']
+counter_list = list(enumerate(my_list, 1))
+print(counter_list)
 ```
