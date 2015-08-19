@@ -94,3 +94,20 @@ i = iter(a)    # a.__iter__()
 j = iter(i)    # i.__iter__() which is a.__iter__().__iter__()
 print i is j   # True, they're the same object
 ```
+
+### Summary
+* Iterable is something that you can for-loop on.
+  * e.g., list, dict, tuple, open files,
+* Iterable has `__iter__()` method.
+* `Iterable.\__iter__()` is Iterator.
+
+* Iterator could be originally container or Generator
+* Iterator is Iterable
+* Iterator has `__next__()` method
+* `Iterator.__iter__()` returns the same Iterator (`Iterator.__iter__()` is `Iterator`)
+
+* Generator is created by
+  1. generator function (has yield)
+  2. generator expression `(i for i in [1,2,3])`
+* `xrange()` "is" a generator object
+* Generator also has `next()` method.

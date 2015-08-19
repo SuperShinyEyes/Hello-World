@@ -8,7 +8,7 @@ def get_g():
     yield i
 
 a = get_g()
-
+print a.next()
 # print len(a)
 print type(a)
 print a.next()
@@ -110,6 +110,7 @@ def my_enumerate(iterable):
 
 l = [3,4,5,6,7]
 print l.__iter__()
+
 t = (1,2,3)
 print type(t), t.__iter__()
 e = my_enumerate(l)
@@ -125,5 +126,6 @@ print list(izip([2,30,5,7],[4,5,6]))
 
 x = [1, 2, 3]
 y1 = iter(x)
+print y1.next()
 y2 = iter(y1)
 print y1 is y2
