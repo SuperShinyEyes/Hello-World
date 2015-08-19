@@ -96,18 +96,21 @@ print i is j   # True, they're the same object
 ```
 
 ### Summary
-* Iterable is something that you can for-loop on.
-  * e.g., list, dict, tuple, open files,
-* Iterable has `__iter__()` method.
-* `Iterable.\__iter__()` is Iterator.
-
-* Iterator could be originally container or Generator
-* Iterator is Iterable
-* Iterator has `__next__()` method
-* `Iterator.__iter__()` returns the same Iterator (`Iterator.__iter__()` is `Iterator`)
-
-* Generator is created by
-  1. generator function (has yield)
-  2. generator expression `(i for i in [1,2,3])`
-* `xrange()` "is" a generator object
-* Generator also has `next()` method not `__next__`.
+* Iterable:
+  * is something that you can for-loop on.
+    * e.g., list, dict, tuple, open files,
+  * has `__iter__()` method.
+  * `Iterable.\__iter__()` is Iterator.
+<br><br>
+* Iterator:
+  * could be originally container or Generator
+  * is Iterable
+  * has `__next__()` method
+  * `Iterator.__iter__()` returns the same Iterator (`Iterator.__iter__()` is `Iterator`)
+<br><br>
+* Generator:
+  * Generator is created by
+    * generator function (has yield)
+    * generator expression `(i for i in [1,2,3])`
+  * `xrange()` "is" a generator object
+  * Generator also has `next()` method not `__next__`.
