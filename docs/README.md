@@ -1,3 +1,4 @@
+# Python main cheat sheet
 #### [Ternary Operators](http://book.pythontips.com/en/latest/ternary_operators.html)
 ```python
 is_fat = True
