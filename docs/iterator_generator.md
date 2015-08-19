@@ -27,12 +27,17 @@ from itertools import count
 counter = count(start=13)
 next(counter)   # >>> 13
 next(counter)   # >>> 14
+```
+```python
 ''' finite sequences '''
 from itertools import cycle
 colors = cycle(['red', 'blue'])
 next(colors)    # >>> 'red'
 next(colors)    # >>> 'blue'
 next(colors)    # >>> 'red'
+```
+```python
+''' finite from infinite '''
 from itertools import islice
 colors = cycle(['red', 'white', 'blue'])  # infinite
 limited = islice(colors, 0, 4)            # finite
