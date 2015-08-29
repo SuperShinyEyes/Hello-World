@@ -218,3 +218,32 @@ my_list = ['apple', 'banana', 'grapes', 'pear']
 counter_list = list(enumerate(my_list, 1))
 print(counter_list)
 ```
+
+#### Get Bluetooth Mac addresses
+```python
+import bluetooth
+nearby_devices = bluetooth.discover_devices()
+for mac_address in nearby_devices:
+  print mac_address
+```
+
+#### Write object to a file
+```python
+import pickle
+
+with open(filename, 'wb') as f:
+  pickle.dump(nearby_devices, f)
+
+if os.path.isfile(filename):
+  print "read list"
+  with open(filename, 'rb') as f:
+    existing_bt_list = pickle.load(f)
+```
+
+#### example
+```python
+```
+
+#### example
+```python
+```
