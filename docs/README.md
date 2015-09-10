@@ -1,11 +1,11 @@
 # Python main cheat sheet
-#### [Ternary Operators](http://book.pythontips.com/en/latest/ternary_operators.html)
+## [Ternary Operators](http://book.pythontips.com/en/latest/ternary_operators.html)
 ```python
 is_fat = True
 state = "fat" if is_fat else "not fat"
 ```
 
-#### [set](http://book.pythontips.com/en/latest/ternary_operators.html)
+## [set](http://book.pythontips.com/en/latest/ternary_operators.html)
 ```python
 some_list = ['a', 'b', 'c', 'b', 'd', 'm', 'n', 'n']
 duplicates = set([x for x in some_list if some_list.count(x) > 1])
@@ -20,7 +20,7 @@ print(input.difference(valid))
 # Output: set(['brown'])
 ```
 
-#### [Decorators](http://book.pythontips.com/en/latest/decorators.html)
+## [Decorators](http://book.pythontips.com/en/latest/decorators.html)
 ```python
 from datetime import datetime
 from functools import wraps
@@ -44,7 +44,7 @@ def some_func():
   pass
 ```
 
-#### [Mutation](http://book.pythontips.com/en/latest/mutation.html)
+## [Mutation](http://book.pythontips.com/en/latest/mutation.html)
 Whenever you assign a variable to another variable of mutable datatype, any changes to the data are reflected by both variables. The new variable is just an alias for the old variable. This is only true for mutable datatypes
 ```python
 def add_to(num, target=[]):
@@ -70,7 +70,7 @@ def add_to(element, target=None):
 
 ```
 
-#### [\__slots__](http://tech.oyster.com/save-ram-with-python-slots/)
+## [\__slots__](http://tech.oyster.com/save-ram-with-python-slots/)
 
 By default Python uses a dict to store an object’s instance attributes. Which is usually fine, and it allows fully dynamic things like setting arbitrary new attributes at runtime.
 
@@ -96,130 +96,16 @@ cat.__dict__                  # Raise an AttributeError
 
 **Tip:** [PyPy](http://pypy.org/) automatically does \__slots__ and other optimization
 
-#### [collections.defaultdict](http://book.pythontips.com/en/latest/collections.html#defaultdict)
-```python
-from collections import defaultdict
 
-colours = (
-    ('Yasoob', 'Yellow'),
-    ('Ali', 'Blue'),
-    ('Arham', 'Green'),
-    ('Ali', 'Black'),
-    ('Yasoob', 'Red'),
-    ('Ahmed', 'Silver'),
-)
 
-favourite_colours = defaultdict(list)
-
-for name, colour in colours:
-    favourite_colours[name].append(colour)
-
-print(favourite_colours)
-
-# output
-# defaultdict(<type 'list'>,
-#    {'Arham': ['Green'],
-#     'Yasoob': ['Yellow', 'Red'],
-#     'Ahmed': ['Silver'],
-#     'Ali': ['Blue', 'Black']
-# })
-```
-Another use case like json tree:
-```python
-import collections
-tree = lambda: collections.defaultdict(tree)
-some_dict = tree()
-some_dict['colours']['favourite'] = "yellow"
-# Works fine
-
-import json
-print(json.dumps(some_dict))
-# Output: {"colours": {"favourite": "yellow"}}
-```
-
-#### [collections.Counter](http://book.pythontips.com/en/latest/collections.html#counter)
-```python
-from collections import Counter
-
-colours = (
-    ('Yasoob', 'Yellow'),
-    ('Ali', 'Blue'),
-    ('Arham', 'Green'),
-    ('Ali', 'Black'),
-    ('Yasoob', 'Red'),
-    ('Ahmed', 'Silver'),
-)
-
-favs = Counter(name for name, colour in colours)
-print(favs)
-# Output: Counter({
-#    'Yasoob': 2,
-#    'Ali': 2,
-#    'Arham': 1,
-#    'Ahmed': 1
-# })
-```
-
-```python
-with open('filename', 'rb') as f:
-    line_count = Counter(f)
-print(line_count)
-
-max_value = 0
-for k, v in line_count.iteritems():
-  if v > max_value:
-    max_value = v
-    max_pair = {k, v}
-
-print max_pair
-```
-
-#### [collections.deque](http://book.pythontips.com/en/latest/collections.html#deque)
-```python
-from collections import deque
-
-d = deque(range(5))
-print(len(d))
-# Output: 5
-
-d.popleft()
-# Output: 0
-
-d.pop()
-# Output: 4
-
-print(d)
-# Output: deque([1, 2, 3])
-```
-set maxlen
-```python
-d = deque(maxlen=30)
-d = deque([1,2,3,4,5])
-d.extendleft([0])
-d.extend([6,7,8])
-print(d)      # Output: deque([0, 1, 2, 3, 4, 5, 6, 7, 8])
-```
-#### [collections.namedtuple]()
-```python
-from collections import namedtuple
-
-Animal = namedtuple('Animal', 'name age type')
-perry = Animal(name="perry", age=31, type="cat")
-
-print(perry)             # Output: Animal(name='perry', age=31, type='cat')
-print(perry.name)        # Output: 'perry'
-print(perry[0])          # Output: 'perry'
-print(perry._asdict())   # Output: OrderedDict([('name', 'perry'), ('age', 31), ...
-```
-
-#### [enumerate](http://book.pythontips.com/en/latest/enumerate.html)
+## [enumerate](http://book.pythontips.com/en/latest/enumerate.html)
 ```python
 my_list = ['apple', 'banana', 'grapes', 'pear']
 counter_list = list(enumerate(my_list, 1))
 print(counter_list)
 ```
 
-#### Get Bluetooth Mac addresses
+## Get Bluetooth Mac addresses
 ```python
 import bluetooth
 nearby_devices = bluetooth.discover_devices()
@@ -227,7 +113,7 @@ for mac_address in nearby_devices:
   print mac_address
 ```
 
-#### Write object to a file
+## Write object to a file
 ```python
 import pickle
 
@@ -240,10 +126,48 @@ if os.path.isfile(filename):
     existing_bt_list = pickle.load(f)
 ```
 
-#### example
+## Swap keys and values in a dict
+```python
+{v:k for k, v in dictionary.items()}
+```
+
+## Give parameter name for format strings
+```python
+colors = ['red', 'green', 'blue', 'yellow']
+for index, color in enumerate(colors):
+    print "{index} --> {color}".format(index=index, color=color)
+```
+
+## [Built-in function: iter(o[, sentinel])](https://docs.python.org/2/library/functions.html#iter)
+Return an iterator object. The first argument is interpreted very differently depending on the presence of the second argument. Without a second argument, o must be a collection object which supports the iteration protocol (the __iter__() method), or it must support the sequence protocol (the __getitem__() method with integer arguments starting at 0). If it does not support either of those protocols, TypeError is raised. If the second argument, sentinel, is given, then o must be a callable object. The iterator created in this case will call o with no arguments for each call to its next() method; if the value returned is equal to sentinel, StopIteration will be raised, otherwise the value will be returned.<br>
+
+One useful application of the second form of iter() is to read lines of a file until a certain line is reached. The following example reads a file until the readline() method returns an empty string:
+```python
+with open('mydata.txt') as fp:
+    for line in iter(fp.readline, ''):
+        process_line(line)
+```
+
+## [Distinguising multiple exit points in loops](https://youtu.be/OSGv2VnC0go?t=1058)
+```python
+def find(seq, tgt):
+    for i, v in enumerate(seq):
+        if v == tgt:
+            break
+    else:   # 'nobreak' would have been a better name than 'else'
+        return False
+    return i
+```
+
+## Reverse a string
+```python
+"Hello!"[::-1]
+```
+
+## example
 ```python
 ```
 
-#### example
+## example
 ```python
 ```
