@@ -2,7 +2,7 @@
 
 ### Introduction
 The idea comes from one of the course assignments at Aalto, Data Structure and Algorithms.
-An assistant, Riikka, suggested me using a generator for getting parent nodes in a heap tree.
+The assistant, Riikka, suggested me using a generator for getting parent nodes in a heap tree.
 
 ### Benchmark test result
 I ran a benchmark test with 150 000 inputs.
