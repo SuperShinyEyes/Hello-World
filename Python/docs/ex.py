@@ -1,21 +1,18 @@
 #!/usr/bin/env python3
+from collections import deque
 
-'''
-Exercise from "Raymond Hettinger - Super considered super! - PyCon 2015 "
-https://www.youtube.com/watch?v=EiOglTERPEo
-Error code example: pastebin(doc)com/jC9nd0S0
-'''
+def search(lines, pattern, history=5):
+    previous_lines = deque(maxlen=history)
+    for line in lines:
+        if pattern in line:
+            yield line, previous_lines
+        previous_lines.append(line)
 
-class Adam(object): pass
-class Eve(object): pass
-class Adam2(object): pass
-class Eve2(object): pass
-class Ramon(Adam, Eve): pass
-class Gayle(Adam, Eve): pass
-class Raymond(Ramon, Gayle): pass
-class Dennis(Adam2, Eve): pass
-class Sharon(Adam, Eve2): pass
-class Rachel(Dennis, Sharon): pass
-class Matthew(Raymond, Rachel): pass
-
-help(Matthew)
+# Example use on a file
+if __name__ == '__main__':
+    with open('/Users/young/projects/Hello World/python_text.txt') as f:
+        for line, prevlines in search(f, 'python', 5):
+            for pline in prevlines:
+                print(pline, end='')
+            print(line, end='')
+            print('-'*20)
