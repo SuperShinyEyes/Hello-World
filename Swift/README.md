@@ -202,41 +202,194 @@ lazy var someClosure: Void -> String = {
     // closure body goes here
 }
 ```
+
+## Extension
+```swift
+extension Int {
+    func repeat(block : () -> ()) {
+        for i in 0..<self {
+            block()
+        }
+    }
+}
+
+3.repeat {
+    println("hello")   // called 3 times
+}
+```
+
+
+## [Enumeration cases](http://www.drewag.me/posts/7-cool-features-in-swift#enumeration-cases-can-hold-values)
+```swift
+struct NetRequest {
+    enum Method {
+        case GET
+        case POST(String)
+    }
+
+    var URL: String
+    var method: Method
+}
+
+var getRequest = NetRequest(URL: "http://drewag.me", method: .GET)
+var postRequest = NetRequest(URL: "http://drewag.me", method: .POST("{\"username\": \"drewag\"}"))
+```
+
+```swift
+class Word {
+    enum PartOfSpeech {
+        case Noun, Pronoun, Verb
+    }
+
+    var value: String
+    var partOfSpeech: PartOfSpeech
+
+    init(_ value: String, _ partOfSpeech: PartOfSpeech) {
+        self.value = value
+        self.partOfSpeech = partOfSpeech
+    }
+}
+var sentence = [Word("I", .Pronoun), Word("ran", .Verb), Word("home", .Noun)]
+sentence.append("quickly") // Cannot convert the expression's type '()' to type 'Word'
+sentence[0].lowercaseString // Could not find member 'lowercaseString'
+sentence[0].value.lowercaseString
+```
+
+
+## Optional
+The Swift compiler helps us with some syntactic sugar, but in reality when you define an optional String like this: var myString : String? the compiler actually translates it to var myString : Optional<String>. An Optional is defined as follows:
+```swift
+enum Optional {
+    case None
+    case Some(T)
+}
+```
+
+
+## [Lazily Calculated Member Variables](http://stackoverflow.com/questions/24006975/why-create-implicitly-unwrapped-optionals)
+Sometimes you have a member variable that should never be nil, but it cannot be set to the correct value during initialization. One solution is to use an Implicitly Unwrapped Optional, but a better way is to use a lazy variable:
+```swift
+class FileSystemItem {
+}
+
+class Directory : FileSystemItem {
+    lazy var contents : [FileSystemItem] = {
+        var loadedContents = [FileSystemItem]()
+        // load contents and append to loadedContents
+        return loadedContents
+    }()
+}
+```
+
+
+## Where clause with optional
+```swift
+if let firstNumber = Int("4"), secondNumber = Int("42") where firstNumber < secondNumber {
+    print("\(firstNumber) < \(secondNumber)")
+}
+// prints "4 < 42"
+```
+
+
+## Initialize an empty array
+```swift
+var operandStack: Array<Double> = Array<Double>()
+```
+
+## Properties
+### Read-only properties
+```swift
+struct Cuboid {
+    var width = 0.0, height = 0.0, depth = 0.0
+    var volume: Double {
+        return width * height * depth
+    }
+}
+```
+
+### Getter & Setter
+If a computed property’s setter does not define a name for the new value to be set, a default name of newValue is used.
+```swift
+struct AlternativeRect {
+    var origin = Point()
+    var size = Size()
+    var center: Point {
+        get {
+            let centerX = origin.x + (size.width / 2)
+            let centerY = origin.y + (size.height / 2)
+            return Point(x: centerX, y: centerY)
+        }
+        set {
+        // Or you could have given a parameter name
+        // set(newCenter) {
+
+            origin.x = newValue.x - (size.width / 2)
+            origin.y = newValue.y - (size.height / 2)
+        }
+    }
+}
+```
+
+### willSet & didSet
+```swift
+class StepCounter {
+    var totalSteps: Int = 0 {
+        willSet(newTotalSteps) {
+            print("About to set totalSteps to \(newTotalSteps)")
+        }
+        didSet {
+            if totalSteps > oldValue  {
+                print("Added \(totalSteps - oldValue) steps")
+            }
+        }
+    }
+}
+let stepCounter = StepCounter()
+stepCounter.totalSteps = 200
+// About to set totalSteps to 200
+// Added 200 steps
+stepCounter.totalSteps = 360
+// About to set totalSteps to 360
+// Added 160 steps
+stepCounter.totalSteps = 896
+// About to set totalSteps to 896
+// Added 536 steps
+```
+
 ##
 ```swift
 
 ```
 
+##
+```swift
+
+```
 
 ##
 ```swift
 
 ```
 
+##
+```swift
+
+```
 
 ##
 ```swift
 
 ```
 
-
 ##
 ```swift
 
 ```
 
-
 ##
 ```swift
 
 ```
-
-
-##
-```swift
-
-```
-
 
 ##
 ```swift

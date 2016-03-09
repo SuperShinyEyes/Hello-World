@@ -34,3 +34,10 @@ var soundDictionary:[String:String] = ["cow":"moo", "dog":"bark", "pig":"squeal"
 print(soundDictionary["cow"]) // prints moo
 print(soundDictionary["fox"]) // what does the fox say?
 print(Optional(1) == 1)
+
+var no: Int
+//print(no)
+//no == nil
+no = 10
+no == 10
+print(no)
