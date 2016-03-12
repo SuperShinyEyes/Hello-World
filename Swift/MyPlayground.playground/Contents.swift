@@ -41,3 +41,9 @@ var no: Int
 no = 10
 no == 10
 print(no)
+
+var list = ["hello", "world"]
+list.joinWithSeparator(")
+var slice: Array<String> = Array(list[0..<1])
+list.contains("hello")
+list.contains("hell")

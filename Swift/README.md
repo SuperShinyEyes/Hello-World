@@ -356,9 +356,63 @@ stepCounter.totalSteps = 896
 // Added 536 steps
 ```
 
-##
-```swift
+## Clojure
 
+### Pass function as a parameter
+```swift
+func performOperation(operation: (Double, Double) -> Double) {
+    operation(operandStack.removeLat(), operandStack.removeLat())
+}
+
+case "×": performOperation(multiply)
+case "−": performOperation(subtract)
+case "+": performOperation(add)
+case "÷": performOperation(divide)
+
+func multiply(n1: Double, n2:Double) -> Double { return n1 * n2 }
+func add(n1: Double, n2:Double) -> Double { return n1 + n2 }
+func subtract(n1: Double, n2:Double) -> Double { return n1 - n2 }
+func divide(n1: Double, n2:Double) -> Double { return n1 / n2 }
+```
+
+### Basic clojure
+```swift
+case "×": performOperation({ (op1: Double, op2: Double) -> Double in return op1 * op2 })
+case "−": performOperation({ (op1: Double, op2: Double) -> Double in return op1 - op2 })
+case "+": performOperation({ (op1: Double, op2: Double) -> Double in return op1 + op2 })
+case "÷": performOperation({ (op1: Double, op2: Double) -> Double in return op1 / op2 })
+```
+
+### Without return when it's specified
+```swift
+case "×": performOperation({ (op1, op2) in return op1 * op2 })
+case "−": performOperation({ (op1, op2) in return op1 - op2 })
+case "+": performOperation({ (op1, op2) in return op1 + op2 })
+case "÷": performOperation({ (op1, op2) in return op1 / op2 })
+```
+
+### Without return when it's specified
+```swift
+case "×": performOperation({ (op1, op2) in op1 * op2 })
+case "−": performOperation({ (op1, op2) in op1 - op2 })
+case "+": performOperation({ (op1, op2) in op1 + op2 })
+case "÷": performOperation({ (op1, op2) in op1 / op2 })
+```
+
+### Almost The Most Concise
+```swift
+case "×": performOperation({ $0 * $1 })
+case "−": performOperation({ $0 - $1 })
+case "+": performOperation({ $0 + $1 })
+case "÷": performOperation({ $0 / $1 })
+```
+
+### The Most Concise
+```swift
+case "×":performOperation { $0 * $1 }
+case "−":performOperation { $0 - $1 }
+case "+":performOperation { $0 + $1 }
+case "÷":performOperation { $0 / $1 }
 ```
 
 ##
