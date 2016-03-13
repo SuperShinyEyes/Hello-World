@@ -415,24 +415,62 @@ case "+":performOperation { $0 + $1 }
 case "÷":performOperation { $0 / $1 }
 ```
 
-##
+### The Most Concise with only functions
 ```swift
-
+case "×":performOperation(*)
+case "−":performOperation(-)
+case "+":performOperation(+)
+case "÷":performOperation(/)
 ```
 
-##
+## Enum
+### Make Enum printable using the protocol, CustomStringConvertible
 ```swift
+private enum Op: CustomStringConvertible {
+    case Operand(Double)
+    case UnaryOperation(String, Double -> Double)
+    case BinaryOperation(String, (Double, Double) -> Double)
 
+    var description: String {
+        get {
+            switch self {
+            case .Operand(let operand):
+                return "\(operand)"
+            case .UnaryOperation(let symbol, _):
+                return symbol
+            case .BinaryOperation(let symbol, _):
+                return symbol
+            }
+        }
+    }
+}
+
+private var knownOps = Dictionary<String, Op>()
 ```
 
-##
+### Generate enum instances
 ```swift
-
+init() {
+    knownOps["×"] = Op.BinaryOperation("×", *)
+    knownOps["−"] = Op.BinaryOperation("−", -)
+    knownOps["+"] = Op.BinaryOperation("+", +)
+    knownOps["÷"] = Op.BinaryOperation("÷", /)
+    knownOps["√"] = Op.UnaryOperation("√", sqrt)
+}
 ```
 
-##
+### Generate enum instances more elegantly
 ```swift
-
+init() {
+    func learnOp(op: Op) {
+        knownOps[op.description] = op
+    }
+    learnOp(Op.BinaryOperation("×", *))
+    learnOp(Op.BinaryOperation("−", -))
+    learnOp(Op.BinaryOperation("+", +))
+    learnOp(Op.BinaryOperation("÷", /))
+    learnOp(Op.UnaryOperation("√", sqrt))
+}
 ```
 
 ##
