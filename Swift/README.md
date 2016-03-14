@@ -617,6 +617,147 @@ String(42)
 ```
 
 
+## Drawing
+```swift
+@IBDesignable
+class ....      // View the drawing on storyboard on-the-fly
+
+@IBInspectable
+var ....        // Access the field on right side inspection tool
+```
+
+
+## Constraining value range
+```swift
+var age: Int = 0 {
+    didSet {
+        age = min(max(age, 0), 100)
+    }
+}
+```
+
+## Identity Operators for reference types, i.e., class instances
+```swift
+===     // Identical to
+!==     // Not identical to
+```
+
+## Struct vs. Class
+* Struct
+    * The structure’s primary purpose is to encapsulate a few relatively simple data values.
+    * It is reasonable to expect that the encapsulated values will be copied rather than referenced when you assign or pass around an instance of that structure.
+    * Any properties stored by the structure are themselves value types, which would also be expected to be copied rather than referenced.
+    * The structure does not need to inherit properties or behavior from another existing type.
+*
+
+## [Type properties](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Properties.html)
+```swift
+struct AudioChannel {
+    static let thresholdLevel = 10
+    static var maxInputLevelForAllChannels = 0
+    var currentLevel: Int = 0 {
+        didSet {
+            if currentLevel > AudioChannel.thresholdLevel {
+                // cap the new audio level to the threshold level
+                currentLevel = AudioChannel.thresholdLevel
+            }
+            if currentLevel > AudioChannel.maxInputLevelForAllChannels {
+                // store this as the new overall maximum input level
+                AudioChannel.maxInputLevelForAllChannels = currentLevel
+            }
+        }
+    }
+}
+
+var jbl = AudioChannel()
+jbl.currentLevel = 5
+print(AudioChannel.maxInputLevelForAllChannels)  // 5
+```
+
+```swift
+struct SomeStructure {
+    static var storedTypeProperty = "Some value."
+    static var computedTypeProperty: Int {
+        return 1
+    }
+}
+enum SomeEnumeration {
+    static var storedTypeProperty = "Some value."
+    static var computedTypeProperty: Int {
+        return 6
+    }
+}
+class SomeClass {
+    static var storedTypeProperty = "Some value."
+    static var computedTypeProperty: Int {
+        return 27
+    }
+    // Below can be overrided by subclasses
+    class var overrideableComputedTypeProperty: Int {
+        return 107
+    }
+}
+```
+
+
+## Heterogenous vs. Homogenous containers
+![heterogenous_vs_homogenous](/images/heterogenous_vs_homogenous.png)
+
+```swift
+protocol Ordered {
+  func precedes(other: Self) -> Bool
+}
+
+struct Number : Ordered {
+  var value: Double = 0
+  func precedes(other: Number) -> Bool {
+    return self.value < other.value
+  }
+}
+
+func binarySearch<T : Ordered>(sortedKeys: [T], forKey k: T) -> Int {
+  var lo = 0
+  var hi = sortedKeys.count
+  while hi > lo {
+    let mid = lo + (hi - lo) / 2
+    if sortedKeys[mid].precedes(k) { lo = mid + 1 }
+    else { hi = mid }
+    }
+  return lo
+}
+```
+
+
+##
+```swift
+
+```
+
+
+##
+```swift
+
+```
+
+
+##
+```swift
+
+```
+
+
+##
+```swift
+
+```
+
+
+##
+```swift
+
+```
+
+
 ##
 ```swift
 

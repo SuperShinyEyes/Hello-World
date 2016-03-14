@@ -2,80 +2,55 @@
 
 import UIKit
 
-
-
-class Person {
-    let name: String
-    init(name: String) { self.name = name }
-    var apartment: Apartment?
-    deinit { print("\(name) is being deinitialized") }
+struct SomeStructure {
+    static var storedTypeProperty = "Some value."
+    static var computedTypeProperty: Int {
+        return 1
+    }
+}
+enum SomeEnumeration {
+    static var storedTypeProperty = "Some value."
+    static var computedTypeProperty: Int {
+        return 6
+    }
+}
+class SomeClass {
+    static var storedTypeProperty = "Some value."
+    static var computedTypeProperty: Int {
+        return 27
+    }
+    class var overrideableComputedTypeProperty: Int {
+        return 107
+    }
 }
 
-class Apartment {
-    let unit: String
-    init(unit: String) { self.unit = unit }
-    var tenant: Person?
-    deinit { print("Apartment \(unit) is being deinitialized") }
+
+
+struct AudioChannel {
+    static let thresholdLevel = 10
+    static var maxInputLevelForAllChannels = 0
+    var currentLevel: Int = 0 {
+        didSet {
+            if currentLevel > AudioChannel.thresholdLevel {
+                // cap the new audio level to the threshold level
+                currentLevel = AudioChannel.thresholdLevel
+            }
+            if currentLevel > AudioChannel.maxInputLevelForAllChannels {
+                // store this as the new overall maximum input level
+                AudioChannel.maxInputLevelForAllChannels = currentLevel
+            }
+        }
+    }
 }
 
 
+var myStruct = TheStruct()
+foo(&myStruct)
+let bw = AudioChannel()
+var jbl = AudioChannel()
+let m1 = unsafeAddressOf(jbl)
+print(m1)
+jbl.currentLevel = 5
+let m2 = unsafeAddressOf(jbl)
+print(m2)
 
-var john: Person = Person(name: "John Appleseed")
-var unit4A: Apartment?
-
-unit4A = Apartment(unit: "4A")
-
-
-john.apartment = unit4A
-unit4A!.tenant = john
-
-
-var soundDictionary:[String:String] = ["cow":"moo", "dog":"bark", "pig":"squeal"]
-print(soundDictionary["cow"]) // prints moo
-print(soundDictionary["fox"]) // what does the fox say?
-print(Optional(1) == 1)
-
-var no: Int
-//print(no)
-//no == nil
-no = 10
-no == 10
-print(no)
-
-var list = ["hello", "world"]
-list.joinWithSeparator(".")
-var slice: Array<String> = Array(list[0..<1])
-list.contains("hello")
-list.contains("hell")
-
-var listCopy = list
-listCopy.removeAll()
-print(list, listCopy)
-var five = 5
-var fiveCopy = five
-five += 1
-print(five, fiveCopy)
-list += ["kk"]
-print(list)
-
-var a = [1,2,3]
-a += (4...10)
-print(a)
-a.replaceRange((1...3), with: (4...10))
-var b = a.sort {$0 > $1}
-print(b)
-print(a)
-a.sort()
-var c = a.filter {$0 % 2 == 0}
-print(c)
-var r = c.reduce(0) {$0 + $1}
-print(r)
-
-var hello = "hello"
-
-let index = hello.startIndex.advancedBy(3)
-hello.substringFromIndex(index)
-hello.substringWithRange(Range<String.Index>(start: hello.startIndex.advancedBy(0), end: hello.endIndex.advancedBy(-3)))
-hello.appendContentsOf("koko")
-hello.capitalizedString
-hello.insertContentsOf("koko".characters, at: hello.startIndex.advancedBy(3))
