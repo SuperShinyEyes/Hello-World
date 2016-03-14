@@ -256,12 +256,24 @@ sentence[0].value.lowercaseString
 ```
 
 
-## Optional
+## Optional is just an enum
 The Swift compiler helps us with some syntactic sugar, but in reality when you define an optional String like this: var myString : String? the compiler actually translates it to var myString : Optional<String>. An Optional is defined as follows:
 ```swift
 enum Optional {
     case None
     case Some(T)
+}
+
+let x: String? = nil  // is equal to
+let x = Optional<String>.None
+
+let x: String? = "hello"  // is equal to
+let x = Optional<String>.Some("hello")
+
+var y = x!    // is ...
+switch x {
+    case Some(let value): y = value
+    case None:  // raise an exception
 }
 ```
 
@@ -473,15 +485,155 @@ init() {
 }
 ```
 
+## Struct
+```swift
+struct MyStruct {
+    var x: Int 42
+    var y: String "haha"
+
+    init(x: Int, y: String)  // default
+}
+```
+
+
+## Range
+```swift
+let array = [1,2,3,4,5]
+let arraySimple = array[1...5]
+let arraySimple2 = array[1..<6]
+for i in [1...10] {}
+```
+
+## Swift & Objective-C lasses
+* NSObject
+    * Base class for all Objective-C classes. Some advanced features will require you to subclass from NSObject
+* NSNumber
+    * let n = NSNumber(35.3)
+    * n.intValue
+* NSDate
+    * localization ramification
+    * NSCalendar, NSDateFormatter, NSDateComponents
+* NSData
+    * A "bag o' bits"
+
+## Lazy Initialization
+### Only 'var' can be *lazy*!
+```swift
+lazy var someProperty: Type = {
+    // Construct the value of someProperty
+    return <the constructed value>
+}
+
+lazy var myProperty = self.initializeMyProperty()
+```
+
+## Failable init
+```swift
+init?(arg1: Type1, ...) {
+    // might return nil
+}
+
+if let image = UIImage(named: "foo") {
+    // image was successfully created
+} else {
+    // couldn't create the image
+}
+
+```
+
+## AnyObject – it's a protocol
+```swift
+var destinationViewController: AnyObject
+
+// Generally,
+if let calcVC = destinationViewController as? CalculatorViewController {
+    // iff destinationViewController was a type of CalculatorViewController
+}
+
+// Check before we even try to do as with the is keyword,
+if destinationViewController is CalculatorViewC ontroller { }
+```
+### Caseting Arrays of AnyObject
+```swift
+var toolbarItems: [AnyObject]
+for item in toolbarItems {
+    if let toolbarItem = item as? UIBarButtonItem { }
+}
+
+// If you know the types for sure
+for toolbarItem in toolbarItems as [UIBarButtonItem] {
+    // crashes if it's nil. Can't use 'as?'
+}
+```
+
+### More examples on AnyObject
+```swift
+// Create a button in code
+let button: AnyObject = UIButton.buttonWithType(UIButtonType.System)
+
+let title = (button as UIButton).currentTitle  // Crashes if not UIButton
+```
+
+## Methods
+### Array<T>
+```swift
+var a = [1,2,3]
+a += [4,5,6]
+// append(T)
+// insert(T, atIndex: Int)
+// splice(Array<T>, atIndex: Int)
+// removeAtIndex(Int)
+// removeRange(Range)
+// replaceRange(Range, [T])
+// a.sort
+// a.sort {$0 > $1}
+// a.filter {_ % 2 == 0}
+let stringified: [String] = a.map { "\($0)" }
+let reduced: Int = a.reduce(0) {$0 + $1}
+```
+
+### String
+```swift
+var hello = "hello"
+let index = hello.startIndex.advancedBy(3)
+print(hello[index])  // "l\n"
+hello.substringFromIndex(index)
+hello.substringWithRange(Range<String.Index>(start: hello.startIndex.advancedBy(0), end: hello.endIndex.advancedBy(-3)))
+hello.appendContentsOf("koko")
+hello.capitalizedString
+hello.insertContentsOf("koko".characters, at: hello.startIndex.advancedBy(3))
+```
+
+
+## Type Conversion
+Convert by creating a new object
+```swift
+let d: Double = 37.5
+let f: Float = 37.5
+let x = Int(d)
+let xd = Double(x)
+let cgf = CGFloat(d)
+String(42)
+```
+
+
 ##
 ```swift
 
 ```
 
+
 ##
 ```swift
 
 ```
+
+
+##
+```swift
+
+```
+
 
 ##
 ```swift
