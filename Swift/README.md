@@ -700,7 +700,7 @@ class SomeClass {
 ```
 
 
-## Heterogenous vs. Homogenous containers
+## [Heterogenous vs. Homogenous containers](https://medium.com/ios-os-x-development/heterogeneous-vs-homogeneous-generics-630971626b7d#.tse64or9q)
 ![heterogenous_vs_homogenous](/images/heterogenous_vs_homogenous.png)
 
 ```swift
@@ -728,53 +728,216 @@ func binarySearch<T : Ordered>(sortedKeys: [T], forKey k: T) -> Int {
 ```
 
 
+## Implement protocol as a class
+```swift
+protocol SomeProtocol: class {
+    func someFunction(SomeView: UIView) -> Double
+}
+
+weak var some = SomeProtocol?
+```
+
+
+## Sieve of Eratosthenes
+### Stateful
+```swift
+func primes(n: Int) -> [Int] {
+    var numbers = [Int](2..<n)
+    for i in 0..<n-2 {
+        guard let prime = numbers[i] as? Int where prime > 0 else { continue }
+        for multiple in (2 * prime - 2).stride(to: n - 2, by: prime) {
+            numbers[multiple] = 0
+        }
+    }
+    return numbers.filter { $0 > 0 }
+}
+```
+
+### Functional
+```swift
+func sieve(numbers: [Int]) -> [Int] {
+    if numbers.isEmpty { return [] }
+    let p = numbers[0]
+    return [p] + sieve( numbers[1..<numbers.count].filter { $0 % p > 0 } )
+}
+```
+
+
+## Swift value types
+* Fundamental types
+    * Int, Double, String, ...
+* Collections
+    * Array, Set, Dictionary
+* tuples, structs, enums
+
+## Sort
+```swift
+var b: [Int] = [3,2,1].sort(<)
+```
+
+## Value semantics: Copies are cheap
+![copies-are-cheap](/images/copies-are-cheap.png)
+
+### Copy-on-Write
+```swift
+struct BezierPath: Drawable {
+    private var _path = UIBezierPath()
+
+    var pathForReading: UIBezierPath {
+        return _path
+    }
+
+    var pathForWriting: UIBezierPath {
+        mutating get {
+            _path = _path.copye() as! UIBezierPath
+            return _path
+        }
+    }
+}
+
+extension BezierPath {
+    var isEmpty: Bool {
+        return pathForReading.isEmpty
+    }
+
+    mutating func addLineToPoint(point: CGPoint) {
+        pathForWriting.addLineToPoint(point)
+    }
+}
+```
+
+### Copy-on-Write: Uniquely Referenced Swift Objects
+```swift
+struct MyWrapper {
+    var _object: SomeSwiftObject
+    var objectForWriting: SomeSwiftObject {
+        mutating get {
+            if !isUniquelyReferencedNonObjC(&_object) {
+                _object = _object.copy()
+            }
+            return _object
+        }
+    }
+}
+```
+
+## Equatable: Make things comparable
+```swift
+struct Polygon: Equatable {
+    var corners: [CGPoint] = []
+}
+
+func ==(lhs: Polygon, rhs: Polygon) -> Bool {
+    return lhs.corners == rhs.corners
+}
+```
+
+## mutating: Update value types in struct
+```swift
+struct Point {
+    var x = 0.0, y = 0.0
+    mutating func moveByX(deltaX: Double, y deltaY: Double) {
+        x += deltaX
+        y += deltaY
+    }
+}
+var somePoint = Point(x: 1.0, y: 1.0)
+somePoint.moveByX(2.0, y: 3.0)
+print("The point is now at (\(somePoint.x), \(somePoint.y))")
+// prints "The point is now at (3.0, 4.0)"
+```
+
+## Equality: isEqual vs. ===
+```swift
+struct Image: Drawable {
+    var topLeft: CGPoint
+    var image: UIImage
+}
+
+extension Image: Equatable { }
+func ==(lhs: Image, rhs: Image) -> Bool {
+    // Are lhs and rhs refer to the same object/image?
+    return lhs.topLeft == rhs.topLeft && lhs.image === rhs.image
+
+    // Do lhs and rhs have the same bitmap image?
+    return lhs.topLeft == rhs.topLeft && lhs.image.isEqual(rhs.image)
+}
+```
+
 ##
 ```swift
 
 ```
 
+##
+```swift
+
+```
 
 ##
 ```swift
 
 ```
 
+##
+```swift
+
+```
 
 ##
 ```swift
 
 ```
 
+##
+```swift
+
+```
 
 ##
 ```swift
 
 ```
 
+##
+```swift
+
+```
 
 ##
 ```swift
 
 ```
 
+##
+```swift
+
+```
 
 ##
 ```swift
 
 ```
 
+##
+```swift
+
+```
 
 ##
 ```swift
 
 ```
 
-
 ##
 ```swift
 
 ```
 
+##
+```swift
+
+```
 
 ##
 ```swift
