@@ -2,16 +2,13 @@
 
 import UIKit
 
-func primes(n: Int) -> [Int] {
-    var numbers = [Int](2..<n)
-    for i in 0..<n-2 {
-        guard let prime = numbers[i] as? Int where prime > 0 else { continue }
-        for multiple in (2 * prime - 2).stride(to: n - 2, by: prime) {
-            print(prime, multiple, numbers[multiple])
-            numbers[multiple] = 0
-        }
-    }
-    return numbers.filter { $0 > 0 }
-}
 
-print(primes(20))
+func logIfNeeded(log: AnyObject, doWeWantToPrint: Bool=false) {
+    if doWeWantToPrint { print("\(log)") }
+}
+func logIfNeeded(log: Bool, doWeWantToPrint: Bool=false) {
+    if doWeWantToPrint { print("\(log)") }
+}
+print(true)
+logIfNeeded("sdf")
+logIfNeeded("asdf", doWeWantToPrint: true)
