@@ -125,5 +125,88 @@ int main (int argc, char *argv[])
   printf("*p=%d\n", *p);                  // *p=40
   printf("age=%d\n", age);                // age=40
   return 0;
+}//**
+```
+
+## Allocate memory for an array
+```C
+double *dataDouble = (double* ) malloc(sizeof(double) * 10);
+```
+
+## Copy array
+```C
+#include <iostream>
+#include <cstdlib>
+#include <algorithm>
+
+int main() {
+    int *container = (int *) malloc(sizeof(int) * 2);
+    container[0] = 10;
+    container[1] = 101;
+    int *dataDouble = (int *) malloc(sizeof(int) * 2);
+    std::copy(container, container + 2, dataDouble);
+    std::cout << *(container+1) << "\n";
+    std::cout << *(dataDouble+1) << "\n";
+    return 0;
 }
+```
+
+## Fast sort (nth select)
+```C
+std::nth_element(buf.begin(), buf.begin() + buf.size()/2 - 1, buf.end());
+```
+
+##
+```C
+
+```
+
+##
+```C
+
+```
+
+##
+```C
+
+```
+
+##
+```C
+
+```
+
+##
+```C
+
+```
+
+##
+```C
+
+```
+
+##
+```C
+
+```
+
+##
+```C
+
+```
+
+##
+```C
+
+```
+
+##
+```C
+
+```
+
+##
+```C
+
 ```

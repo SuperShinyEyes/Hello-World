@@ -39,6 +39,16 @@ iter.next   // 1
 */
 ```
 
+### String
+```scala
+val a = "School"
+'a'.isLetterOrDigit     // true
+'a'.isLetter            // true
+'a'.isDigit             // false
+a.map(_.toLower)
+a.substring(1,a.length-2)   // Head–tail exclusive method: "cho"
+```
+
 ### Sequence operators
 ```scala
 // Prepend
@@ -58,6 +68,9 @@ val c = (50 /: a)((x,y) => x + y)   // c: Int = 60
 val a = List(1,2,3,4)
 val b = (a :\ 10 )(_+_)   // b: Int = 15
 val c = (a :\ 50)((x,y) => x + y)   // c: Int = 60
+
+// Merge two lists
+List(1,2,3,4) ::: List(1,2,3,4)     // List(1,2,3,4,1,2,3,4)
 
 // Convert sequence items to one string
 val a = List(1,2,3,4)   // a: List[Int] = List(1, 2, 3, 4)
@@ -300,6 +313,9 @@ val ordered = digits.sorted
 
 /* reverse order */
 val reverse = digits.sorted(Ordering[Int].reverse)
+
+/* Sort by absolute value */
+digits.sortWith(_.abs<_.abs)
 
 /* Custom sorting */
 scala> case class User(name: String, age: Int)
@@ -744,9 +760,252 @@ scala> names.groupBy(name => name(0).toLower)
 res0: scala.collection.immutable.Map[Char,List[String]] = Map(t -> List(Turing), a -> List(abba, Alabama), c -> List(Celsius))
 ```
 
-##
+## Wall clock time
 ```scala
+package object timer {
+  /**
+   * Runs the argument function f and measures the wall clock time spent in it in seconds.
+   * Returns a pair consisting of
+   * - the return value of the function call and
+   * - the time spent in executing the function.
+   */
+  def measureWallClockTime[T](f: => T): (T, Double) = {
+    val start = System.nanoTime
+    val r = f
+    val end = System.nanoTime
+    val t = (end - start) / 1000000000.0
+    (r, t)
+  }
+}
 
+measureWallClockTime((1 to 1000).foldLeft(0)((s,v) => s+(v*v)))
+// res: (Int, Double) = (333833500,0.001154755)
+
+measureWallClockTime(Thread.sleep(1000))
+// res: (Unit, Double) = ((),1.000215994)
+```
+
+## CPU time
+```scala
+import java.lang.management.{ ManagementFactory, ThreadMXBean }
+
+package object timer {
+  val bean: ThreadMXBean = ManagementFactory.getThreadMXBean()
+  def getCpuTime = if (bean.isCurrentThreadCpuTimeSupported()) bean.getCurrentThreadCpuTime() else 0
+  /**
+   * Runs the argument function f and measures the user+system time spent in it in seconds.
+   * Accuracy depends on the system, preferably not used for runs taking less than 0.1 seconds.
+   * Returns a pair consisting of
+   * - the return value of the function call and
+   * - the time spent in executing the function.
+   */
+  def measureCpuTime[T](f: => T): (T, Double) = {
+    val start = getCpuTime
+    val r = f
+    val end = getCpuTime
+    val t = (end - start) / 1000000000.0
+    (r, t)
+  }
+
+
+/**
+ * The same as measureCpuTime but the function f is applied repeatedly
+ * until a cumulative threshold time use is reached (currently 0.1 seconds).
+ * The time returned is the cumulative time divided by the number of repetitions.
+ * Therefore, better accuracy is obtained for very small run-times.
+ * The function f should be side-effect free!
+ */
+    def measureCpuTimeRepeated[T](f: => T): (T, Double) = {
+      val start = getCpuTime
+      var end = start
+      var runs = 0
+      var r: Option[T] = None
+      while (end - start < 100000000L) {
+        runs += 1
+        // function f takes incredibly insignificant amount of time
+        // Thus repeat it during 100000000L and divide it by the #repetitions.
+        r = Some(f)
+        end = getCpuTime
+      }
+      val t = (end - start) / (runs * 1000000000.0)
+      (r.get, t)
+    }
+}
+measureCpuTime(Thread.sleep(1000))
+// res: (Unit, Double) = ((),0.0)
+
+val l = (1 to 100000).toList
+// l: List[Int] = List(1, 2, 3, 4, ...
+
+measureCpuTime { l.sum }
+// res: (Int, Double) = (705082704,0.0)
+
+measureCpuTimeRepeated { l.sum }
+// res: (Int, Double) = (705082704,9.70873786407767E-4)
+```
+
+## Javier's optimization
+* map() is FAST. Faster than while loop
+* Build a hash table in order to access (NOT filter!!!)
+```scala
+// Ohjelmointi 2 Week 7. PairSum
+def hasPair(l1: List[Int], l2: List[Int], target: Int): Option[Pair[Int, Int]] = {
+    var returnValue: Option[Pair[Int, Int]] = None
+    val l2Map = l2.map { i => (target-i, i) } toMap
+
+    l1 foreach { i =>
+        if(l2Map.keySet.contains(i)) returnValue = Some(i, l2Map(i))
+    }
+    return returnValue
+  }
+```
+
+## [Tail Recursion Optimization(TCO)](http://stackoverflow.com/questions/3114142/what-is-the-scala-annotation-to-ensure-a-tail-recursive-function-is-optimized)
+```scala
+import scala.annotation.tailrec
+
+def fact(n : Int) : BigInt = {
+ require(n >= 1, "n should be a positive integer")
+ // Compiler warns if the call is not in tail position.
+ @tailrec def iterate(i : Int, result : BigInt) : BigInt = {
+   if(i > n) result
+   else iterate(i+1, result*i)
+ }
+ iterate(2, BigInt(1))
+}
+```
+## Linked List in Scala
+### Normal implementation
+```scala
+package linkedLists
+import scala.annotation.tailrec
+
+abstract class LinkedList[A] {
+  /**
+   * Returns true if the list is empty.
+   */
+  def isEmpty: Boolean
+  /**
+   * Returns the first element in the list
+   * (throws an exception if the list is empty).
+   */
+  def head: A
+  /**
+   * Returns the list obtained by removing the first element from this list
+   * (throws an exception if the list is empty).
+   */
+  def tail: LinkedList[A]
+}
+
+class Nil[A]() extends LinkedList[A] {
+  def isEmpty = true
+  def head = throw new java.util.NoSuchElementException("head of empty list")
+  def tail = throw new java.util.NoSuchElementException("tail of empty list")
+}
+class Cons[A](val head: A, val tail: LinkedList[A]) extends LinkedList[A] {
+  def isEmpty = false
+}
+
+/** Companion object for an empty list */
+object Nil {
+  def apply[A]() = new Nil[A]()
+}
+/** Companion object for a non-empty list */
+object Cons {
+  def apply[A](head : A, tail : LinkedList[A]) = new Cons(head, tail)
+}
+```
+
+### Linked List with case classes
+No need for companion objects
+```scala
+abstract class LinkedList[A] {
+  def isEmpty: Boolean
+  def head: A
+  def tail: LinkedList[A]
+}
+
+case class Nil[A]() extends LinkedList[A] {
+  def isEmpty = true
+  def head = throw new java.util.NoSuchElementException("head of empty list")
+  def tail = throw new java.util.NoSuchElementException("tail of empty list")
+}
+
+case class Cons[A](val head: A, val tail: LinkedList[A]) extends LinkedList[A] {
+  def isEmpty = false
+}
+```
+
+## [Patter matching](https://twitter.github.io/scala_school/basics2.html)
+```scala
+val times = 1
+
+times match {
+  case 1 => "one"
+  case 2 => "two"
+  case _ => "some other number"
+}
+
+// Matching with guard
+times match {
+  case i if i == 1 => "one"
+  case i if i == 2 => "two"
+  case _ => "some other number"
+}
+
+// Matching on type
+def bigger(o: Any): Any = {
+  o match {
+    case i: Int if i < 0 => i - 1
+    case i: Int => i + 1
+    case d: Double if d < 0.0 => d - 0.1
+    case d: Double => d + 0.1
+    case text: String => text + "s"
+  }
+}
+
+// With case classes
+case class Calculator(brand: String, model: String)
+
+val hp20b = Calculator("hp", "20B")
+val hp30b = Calculator("hp", "30B")
+
+def calcType(calc: Calculator) = calc match {
+  case Calculator("hp", "20B") => "financial"
+  case Calculator("hp", "48G") => "scientific"
+  case Calculator("hp", "30B") => "business"
+  case Calculator(ourBrand, ourModel) => "Calculator: %s %s is of unknown type".format(ourBrand, ourModel)
+
+  // Other alternatives for that last match
+  case Calculator(_, _) => "Calculator of unknown type"
+  // OR we could simply not specify that it’s a Calculator at all.
+  case _ => "Calculator of unknown type"
+  // OR we could re-bind the matched value with another name
+  case c@Calculator(_, _) => "Calculator: %s of unknown type".format(c)
+}
+```
+
+## Exceptions
+```scala
+try {
+  remoteCalculatorService.add(1, 2)
+} catch {
+  case e: ServerIsDownException => log.error(e, "the remote calculator service is unavailable. should have kept your trusty HP.")
+} finally {
+  remoteCalculatorService.close()
+}
+
+// try is also expression-oriented
+val result: Int = try {
+  remoteCalculatorService.add(1, 2)
+} catch {
+  case e: ServerIsDownException => {
+    log.error(e, "the remote calculator service is unavailable. should have kept your trusty HP.")
+    0
+  }
+} finally {
+  remoteCalculatorService.close()
+}
 ```
 
 ##
@@ -799,3 +1058,7 @@ res0: scala.collection.immutable.Map[Char,List[String]] = Map(t -> List(Turing),
 def movingSum(l, w):
     return [sum(l[i:i+w]) for i in range(len(l)-w+1)]
 ```
+
+
+# References
+1. https://twitter.github.io/scala_school/
