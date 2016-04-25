@@ -125,16 +125,16 @@ int main (int argc, char *argv[])
   printf("*p=%d\n", *p);                  // *p=40
   printf("age=%d\n", age);                // age=40
   return 0;
-}//**
+}
 ```
 
 ## Allocate memory for an array
-```C
+```c
 double *dataDouble = (double* ) malloc(sizeof(double) * 10);
 ```
 
 ## Copy array
-```C
+```c
 #include <iostream>
 #include <cstdlib>
 #include <algorithm>
@@ -152,61 +152,139 @@ int main() {
 ```
 
 ## Fast sort (nth select)
-```C
+```c
 std::nth_element(buf.begin(), buf.begin() + buf.size()/2 - 1, buf.end());
 ```
 
-##
-```C
+## Vector types in GCC
+* Always available
+* Compiler uses special vector registers and instructions whenever possible
+* Remember to specify the architecture
+    * g++ -march=native
+
+```c
+typedef double double4_t __attribute__ ((__vector_size__ (4*sizeof(double))));
+// Now these are almost equivalent:
+double4_t a;
+double a[4];
+
+
+typedef float float8_t __attribute__ ((__vector_size__ (8*sizeof(float))));
+// Now these are almost equivalent:
+float8_t a;
+float a[8];
+
+
+// Operations on entire vectors:
+float8_t a, b, c;
+a += b * c;
+// Same as:
+for (int i = 0; i < 8; ++i) {
+ a[i] += b[i] * c[i];
+}
+```
+
+## Memory Alignment for Vector Instruction
+* posix_memalign() to allocate memory, free() to release
+* common/vector.* for helper function
+    * float8_alloc(), double4_alloc()
+
+```c
+double4_t* x = double4_alloc(n);
+double4_t* y = double4_alloc(n);
+
+for (int i = 0; i < n; ++i) {
+ for (int j = 0; j < 4; ++j) {
+ x[i][j] = ...;
+ }
+}
+
+for (int i = 0; i < n; ++i) {
+ double4_t z = x[i];
+ y[i] = z * z;
+}
+
+// Is equivalent to in Assembly language:
+/*
+ vmovapd (%rbx,%rax), %ymm0
+ vmulpd %ymm0, %ymm0, %ymm0
+ vmovapd %ymm0, (%r12,%rax)
+ addq $32, %rax
+ cmpq %rdx, %rax
+ jne L42
+*/
+// ...pd = packed doubles = vector of doubles
+// ymm.. = 256-bit register
+
+free(x);
+free(y);
+```
+
+## Vector Instruction Tips
+1. Repeatedly work with a small chunk of << 32KB of data:
+    * all data remains in L1
+    * small latency (order of 1 ns)
+    * large bandwidth
+2. Random reads in >> 8MB of data:
+    * most memory lookups are cache misses
+    * large latency (order of 100 ns)
+    * small bandwidth
+3. Cases:
+    * Ideal: linear read of L1
+    * Good: random access of L1, linear read of L2–L3
+    * Tolerable: linear read of main memory
+    * Bad: random access of main memory
+    * Horrible: random reads with dependencies
+4. You can do useful work while you wait for data from main memory
+5.  Instruction-level parallelism does it automatically, if there are some other independent operations that you can run
+    * following a linked list: expensive, because all the items are independent.
+
+![vector_instruction_benchmark](/images/vector_instruction_benchmark.png)
+
+### Cache blocking: better locality
+![Cache_blocking_1](/images/Cache_blocking_1.png)
+![Cache_blocking_1](/images/Cache_blocking_2.png)
+[Cache Blocking Demo](https://users.ics.aalto.fi/suomela/cache-blocking-demo/)
+```c
 
 ```
 
 ##
-```C
+```c
 
 ```
 
 ##
-```C
+```c
 
 ```
 
 ##
-```C
+```c
 
 ```
 
 ##
-```C
+```c
 
 ```
 
 ##
-```C
+```c
 
 ```
 
 ##
-```C
+```c
 
 ```
 
 ##
-```C
+```c
 
 ```
 
 ##
-```C
-
-```
-
-##
-```C
-
-```
-
-##
-```C
+```c
 
 ```
