@@ -1008,9 +1008,32 @@ val result: Int = try {
 }
 ```
 
-##
+## [Combinations & Implicit classes](http://eddmann.com/posts/solving-the-k-combinations-problem-in-scala/)
 ```scala
+// Generator
+val combinations = (for {
+    i <- 1 to 10
+    j <- 1 until i
+} yield (i, j)) length
 
+// Recursion
+def choose(n: Int, k: Int): Int =
+    if (k == 0 || k == n) 1
+    else choose(n - 1, k - 1) + choose(n - 1, k)
+
+val combinations = choose(10, 2)
+
+// Implicit class
+implicit class Combinations(n: Int) {
+    private def fact(n: Int): Int = (1 to n).foldLeft(1)(_ * _)
+    def ! = fact(n) // allows 10!
+    def choose(k: Int): Int = fact(n) / (fact(n - k) * fact(k))
+}
+
+val combinations = 10 choose 2
+
+// Test it!
+if (Set(a, b, c).size == 1) "Woot!" else "Nope!
 ```
 
 ##
