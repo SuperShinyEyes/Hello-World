@@ -1033,17 +1033,35 @@ implicit class Combinations(n: Int) {
 val combinations = 10 choose 2
 
 // Test it!
-if (Set(a, b, c).size == 1) "Woot!" else "Nope!
+if (Set(a, b, c).size == 1) "Woot!" else "Nope!"
 ```
 
-##
+## [Find duplicates in a collection](http://stackoverflow.com/a/24729587)
 ```scala
+val dup = List(1,1,1,2,3,4,5,5,6,100,101,101,102)
+dup.groupBy(identity).collect { case (x, List(_,_,_*)) => x }
+// Or you could also write
+dup.groupBy(identity).collect { case (x,ys) if ys.lengthCompare(1) > 0 => x }
 
+dup.groupBy(identity)
+// Map[Int,List[Int]] = Map(101 -> List(101, 101), 5 -> List(5, 5), 1 -> List(1, 1, 1), 6 -> List(6), 102 -> List(102), 2 -> List(2), 3 -> List(3), 4 -> List(4), 100 -> List(100))
 ```
 
-##
+## Scala collect
+The official scala docs say that collect “builds a new collection by applying a partial function to all elements of this sequence on which the function is defined.”
 ```scala
+val convertFn: PartialFunction[Any, Int] = {
+  case i: Int => i;
+  case s: String => s.toInt;
+  case Some(s: String) => s.toInt
+}
 
+List(0, 1, "2", "3", Some(3), Some("4")).collect(convertFn)
+//List[Int] = List(0, 1, 2, 3, 4, 5)
+
+// Even though the function takes an “Any”, it would fail for many types of values; e.g. floating point values – these Scala will drop out of the final collection. 
+List(6.5, None, null, Unit).collect(convertFn)
+//List[Int] = List()
 ```
 
 ##
