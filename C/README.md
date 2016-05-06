@@ -247,31 +247,107 @@ free(y);
 [Cache Blocking Demo](https://users.ics.aalto.fi/suomela/cache-blocking-demo/)
 
 
+## C preprocessing
+### Directives
+Directive |	Description
+---|---
+#define | Substitutes a preprocessor macro.
+#include | Inserts a particular header from another file.
+#undef | Undefines a preprocessor macro.
+#ifdef | Returns true if this macro is defined.
+#ifndef | Returns true if this macro is not defined.
+#if | Tests if a compile time condition is true.
+#else | The alternative for #if.
+#elif | #else and #if in one statement.
+#endif | Ends preprocessor conditional.
+#error | Prints error message on stderr.
+#pragma | Issues special commands to the compiler, using a standardized method.
+
+### Predefined Macros
+Macro | Description
+---|---
+__DATE__ | The current date as a character literal in "MMM DD YYYY" format.
+__TIME__ | The current time as a character literal in "HH:MM:SS" format.
+__FILE__ | This contains the current filename as a string literal.
+__LINE__ | This contains the current line number as a decimal constant.
+__STDC__ | Defined as 1 when the compiler complies with the ANSI standard.
+
 ```c
+#include <stdio.h>
+
+main() {
+
+   printf("File :%s\n", __FILE__ );    // File :test.c
+   printf("Date :%s\n", __DATE__ );    // Date :Jun 2 2012
+   printf("Time :%s\n", __TIME__ );    // Time :03:36:24
+   printf("Line :%d\n", __LINE__ );    // Line :8
+   printf("ANSI :%d\n", __STDC__ );    // ANSI :1
+
+}
+```
+
+### Examples
+```c
+#undef  FILE_SIZE
+#define FILE_SIZE 42
+
+#ifdef DEBUG
+   /* Your debugging statements here */
+#endif
 
 ```
 
-##
+### The Stringize (#) Operator
 ```c
+#include <stdio.h>
 
+#define  message_for(a, b)  \
+   printf(#a " and " #b ": We love you!\n")
+
+int main(void) {
+   message_for(Carole, Debra);    // Carole and Debra: We love you!
+   return 0;
+}
 ```
 
-##
+### Token pasting(##)
 ```c
+#include <stdio.h>
 
+#define tokenpaster(n) printf ("token" #n " = %d", token##n)
+
+int main(void) {
+   int token34 = 40;
+   tokenpaster(34);    // token34 = 40
+   return 0;
+}
 ```
 
-##
+### Parameterized Macros
 ```c
+int square(int x) {
+   return x * x;
+}
 
+// Is equal to
+#define square(x) ((x) * (x))
+
+// More example
+#define MAX(x,y) ((x) > (y) ? (x) : (y))
+
+int main(void) {
+   printf("Max between 20 and 10 is %d\n", MAX(10, 20));  
+   return 0;
+}
 ```
 
-##
-```c
-
-```
-
-##
+## What happens during compile-time
+1. Editor: Programmer creates program in the editor and stores it on disk.
+2. Preprocessor: Preprocessor program processes the code.
+3. Compiler: Compiler creates object code and stores it on disk.
+4. Linker: Linker links the object code with the libraries, creates an executable file and stores it on disk.
+5. Loader: Loader puts program in memory.
+6. CPU: CPU takes each instruction and executes it, possibly storing new data values as the program executes.
 ```c
 
 ```

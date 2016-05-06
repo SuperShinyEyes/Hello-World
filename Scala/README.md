@@ -1059,22 +1059,103 @@ val convertFn: PartialFunction[Any, Int] = {
 List(0, 1, "2", "3", Some(3), Some("4")).collect(convertFn)
 //List[Int] = List(0, 1, 2, 3, 4, 5)
 
-// Even though the function takes an “Any”, it would fail for many types of values; e.g. floating point values – these Scala will drop out of the final collection. 
+// Even though the function takes an “Any”, it would fail for many types of values; e.g. floating point values – these Scala will drop out of the final collection.
 List(6.5, None, null, Unit).collect(convertFn)
 //List[Int] = List()
 ```
 
-##
+## Multithreading
 ```scala
+class SumWorker(name: String, target: Int, report: Int) extends Runnable {
+  def run() {
 
+    // This method contains the code we want to run in a thread
+
+    // ... say, we want to take the sum of the integers i = 1,2,...,target,
+    //     and issue a progress report to after every "report" integers
+
+    var s = 0L
+    var i = 1
+    while(i <= target) {
+      s = s + i
+      if(i % report == 0) {
+        println("Worker %s reporting at i = %d".format(name, i))
+      }
+      i = i + 1
+    }
+    println("Worker %s is done and reports sum s = %d".format(name, s))
+
+    // The thread stops when run() returns, i.e. here
+  }
+}
+
+
+val wa = new SumWorker("SumA", 100000000, 10000000) // prepare worker A
+val wb = new SumWorker("SumB", 100000000, 10000000) // prepare worker B
+val wc = new SumWorker("SumC", 100000000, 10000000) // prepare worker C
+
+val ta = new Thread(wa)         // prepare a thread for worker A
+val tb = new Thread(wb)         // prepare a thread for worker B
+val tc = new Thread(wc)         // prepare a thread for worker C
+
+ta.start()                      // start thread of worker A
+tb.start()                      // start thread of worker B
+tc.start()                      // start thread of worker C
+
+// Worker SumB reporting at i = 10000000
+// Worker SumA reporting at i = 10000000
+// Worker SumB reporting at i = 20000000
+// Worker SumC reporting at i = 10000000
+// Worker SumA reporting at i = 20000000
+// Worker SumC reporting at i = 20000000
+// Worker SumB reporting at i = 30000000
+// Worker SumA reporting at i = 30000000
+// Worker SumC reporting at i = 30000000
+// Worker SumB reporting at i = 40000000
+// Worker SumA reporting at i = 40000000
+// Worker SumC reporting at i = 40000000
+// Worker SumB reporting at i = 50000000
+// Worker SumA reporting at i = 50000000
+// Worker SumC reporting at i = 50000000
+// Worker SumB reporting at i = 60000000
+// Worker SumA reporting at i = 60000000
+// Worker SumC reporting at i = 60000000
+// Worker SumB reporting at i = 70000000
+// Worker SumC reporting at i = 70000000
+// Worker SumA reporting at i = 70000000
+// Worker SumB reporting at i = 80000000
+// Worker SumC reporting at i = 80000000
+// Worker SumB reporting at i = 90000000
+// Worker SumA reporting at i = 80000000
+// Worker SumC reporting at i = 90000000
+// Worker SumB reporting at i = 100000000
+// Worker SumB is done and reports sum s = 5000000050000000
+// Worker SumA reporting at i = 90000000
+// Worker SumC reporting at i = 100000000
+// Worker SumC is done and reports sum s = 5000000050000000
+// Worker SumA reporting at i = 100000000
+// Worker SumA is done and reports sum s = 5000000050000000
 ```
 
-##
 ```scala
+class Greeter(id: Int, num: Int) extends Runnable {
+  def run() {
+    for(i <- 0 until num) {
+      print("%d".format(id)) // greet by printing a single digit
+    }
+  }
+}
 
+val n = 10               // ten greeters -- one for each digit 0,1,...,9
+val num_greetings = 200  // each greeter sends 200 greetings
+val greeters = (0 until n).map(id => new Greeter(id, num_greetings))
+val threads = greeters.map(new Thread(_))
+threads.foreach(_.start())
+
+// Random output...
 ```
 
-##
+### Multithreading: Synchronization – start/join
 ```scala
 
 ```

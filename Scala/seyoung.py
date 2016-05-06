@@ -1,44 +1,36 @@
-# l1 = [1,2,3,4,5, 0]
-# l2 = [-1,2,0,3,4,-5]
-l1 =[2424, 5114, 3769, 2962, 8342, 541, 6279, 8342, 3500, 8611, 5114, 6459]
-l2 =[12559, 7269, 6193, 4579, 6462, 3503, 5386, 7807, 1620, 275, 6193, 4848]
+#!/usr/bin/env python3
 
-l1.sort()
-l2.sort()
-l2.reverse()
-print(l1, l2)
-def pairSum(l1, l2, t):
-    for i in l1:
-        for j in l2:
-            s = i + j
-            if s == t:
-                return i, j
-            elif s < t:
-                break
+## getDigitToProcess(365, 0) => 5
+## getDigitToProcess(365, 1) => 6
+def getDigitToProcess(n, p):
+    return n % pow(10, p+1) // pow(10, p)
 
-    return None
+def process(array, place):
+    rankingArray = [0 for i in range(10)]
+    resultArray = [0 for i in range(len(array))]
+    for n in array:
+        rankingArray[getDigitToProcess(n, place)] += 1
 
-print(pairSum(l1, l2, 18838))
+    rankingArray = [sum(rankingArray[:i+1]) for i in range(0, 10)]
 
+    for i in range(len(array)-1, -1, -1):
+        number = array[i]
+        digit = getDigitToProcess(number, place)
+        rankingArray[digit] -= 1
+        index = rankingArray[digit]
+        resultArray[index] = number
 
-def fact(n):
-    def iterate(i, acc):
-        if(i > n): return acc
-        else: return iterate(i+1, acc*i)
-    return iterate(2, 1)
+    return resultArray
 
 
-def tail_call_optimized(g):
-    def func(*args, **kwargs):
-        f = sys._getframe()
-        if f.f_back and f.f_back.f_back and f.f_back.f_back.f_code == f.f_code:
-            raise TailRecurseException(args, kwargs)
-        else:
-            while 1:
-                try:
-                    return g(*args, **kwargs)
-                except TailRecurseException as e:
-                    args = e.args
-                    kwargs = e.kwargs
-    func.__doc__ = g.__doc__
-    return func
+def radixSort(array):
+    resultArray = [0 for i in range(len(array))]
+    rankingArray = [0 for i in range(10)]
+
+    iterations = len(str(max(array)))
+    for i in range(iterations):
+        array = process(array, i)
+
+    print(array)
+# process([123,543,2,5546,111], 1)
+radixSort([123,543,2,5546,77,94,111])
