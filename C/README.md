@@ -352,14 +352,112 @@ int main(void) {
 
 ```
 
-##
+## CUDA
+### Hello World with Device code
 ```c
+__global__ void add(int *a, int *b, int *c) {
+    c[blockIdx.x] = a[blockIdx.x] + b[blockIdx.x];
 
+    // Let’s change add() to use parallel threads instead of parallel blocks
+    // c[threadIdx.x] = a[threadIdx.x] + b[threadIdx.x];
+}
+
+#define N 512
+int main(void) {
+    int a, b, c; // host copies of a, b, c
+    int *d_a, *d_b, *d_c; // device copies of a, b, c
+    int size = N * sizeof(int);
+
+    // Allocate space for device copies of a, b, c
+    cudaMalloc((void **)&d_a, size);
+    cudaMalloc((void **)&d_b, size);
+    cudaMalloc((void **)&d_c, size);
+
+    // Alloc space for host copies of a, b, c and setup input values
+    a = (int *)malloc(size); random_ints(a, N);
+    b = (int *)malloc(size); random_ints(b, N);
+    c = (int *)malloc(size);
+
+    // Copy inputs to device
+    cudaMemcpy(d_a, &a, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_b, &b, size, cudaMemcpyHostToDevice);
+
+    // Launch add() kernel on GPU
+    add<<<N,1>>>(d_a, d_b, d_c);
+    // Launch add() kernel on GPU with N blocks
+    // add<<<1,N>>>(d_a, d_b, d_c);
+
+    // Copy result back to host
+    cudaMemcpy(&c, d_c, size, cudaMemcpyDeviceToHost);
+
+    // Cleanup
+    free(a); free(b); free(c);
+    cudaFree(d_a); cudaFree(d_b); cudaFree(d_c);
+    return 0;
+}
+
+// nvcc
 ```
+* CUDA C/C++ keyword __global__ indicates a function that:
+    * Runs on the device
+    * Is called from host code
 
-##
+* nvcc separates source code into host and device components
+    * Device functions (e.g. add()) processed by NVIDIA compiler
+    * Host functions (e.g. main()) processed by standard host compiler
+        * gcc, cl.exe
+
+* Triple angle brackets mark a call from host code to device code
+    * Also called a “kernel launch”
+    * Launch N copies of add() with add<<<N,1>>>(…);
+    * Launch N threads of add() with add<<<1,N>>>(…);
+
+### CUDA API
+CUDA|C
+---|---
+cudaMalloc() | malloc()
+cudaFree() | free()
+cudaMemcpy() | memcpy()
+
+### Vector Addition with Blocks and Threads
 ```c
+__global__ void add(int *a, int *b, int *c) {
+    int index = threadIdx.x + blockIdx.x * blockDim.x;
+    c[index] = a[index] + b[index];
+}
 
+#define N (2048*2048)
+#define THREADS_PER_BLOCK 512
+int main(void) {
+    int *a, *b, *c; // host copies of a, b, c
+    int *d_a, *d_b, *d_c; // device copies of a, b, c
+    int size = N * sizeof(int);
+
+    // Alloc space for device copies of a, b, c
+    cudaMalloc((void **)&d_a, size);
+    cudaMalloc((void **)&d_b, size);
+    cudaMalloc((void **)&d_c, size);
+
+    // Alloc space for host copies of a, b, c and setup input values
+    a = (int *)malloc(size); random_ints(a, N);
+    b = (int *)malloc(size); random_ints(b, N);
+    c = (int *)malloc(size);
+
+    // Copy inputs to device
+    cudaMemcpy(d_a, a, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_b, b, size, cudaMemcpyHostToDevice);
+
+    // Launch add() kernel on GPU
+    add<<<N/THREADS_PER_BLOCK,THREADS_PER_BLOCK>>>(d_a, d_b, d_c);
+
+    // Copy result back to host
+    cudaMemcpy(c, d_c, size, cudaMemcpyDeviceToHost);
+
+    // Cleanup
+    free(a); free(b); free(c);
+    cudaFree(d_a); cudaFree(d_b); cudaFree(d_c);
+    return 0;
+}
 ```
 
 ##
