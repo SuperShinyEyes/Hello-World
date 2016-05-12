@@ -1,6 +1,8 @@
-val combinations = (for {
-    i <- 1 to 3 by
-    j <- 1 to 3
-} yield (i, j))
 
-println(combinations)
+
+def s: Int = {
+    val a = (0 to 10000).toList
+
+}
+
+s
