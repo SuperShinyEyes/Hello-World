@@ -5,3 +5,5 @@
 2. [Driving examination](http://www.trafi.fi/en/road/i_want_a_driving_licence/driving_examination)
 
 3. [Expat](http://www.expat-finland.com/living_in_finland/driving.html#finnish)
+
+4. [Ajokoe.fi](http://www.ajokoe.fi/)
