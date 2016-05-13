@@ -1,14 +1,8 @@
 #!/usr/bin/env python3
+import sys
 import os
 import requests
 from bs4 import BeautifulSoup
-url = "https://www.youtube.com/watch?v=gmvwZRwn-j0"
-# r = requests.get(url)
-# soup = BeautifulSoup(r.content, 'html.parser')
-# print(os.path.dirname(os.getcwd()))
-# # print(soup.title.string)
-# print(os.path.join(os.path.dirname(os.getcwd()), "images/", "cat"))
-# print(soup.prettify())
 
 class YouTubeHTML():
     def __init__(self, url):
@@ -65,7 +59,7 @@ class READMEWriter():
 
     def getTitle(self):
         text = "{title} by {username}".format(title=self.html.title, username=self.html.username)
-        return "### [{title}]({link})\n".format(title=text, link=self.html.url)
+        return "\n### [{title}]({link})\n".format(title=text, link=self.html.url)
 
 
 
@@ -75,13 +69,28 @@ class READMEWriter():
         return "![{name}]({path})\n".format(name=self.html.title, path=imagePath)
 
     def write(self):
-        with open("README_test.md", mode='a') as f:
+        with open("README.md", mode='a') as f:
             f.write(self.title)
             f.write(self.image)
 
 if __name__ == '__main__':
-    html = YouTubeHTML(url)
-    writer = READMEWriter(html)
-    writer.write()
+    if len(sys.argv) == 1:
+        print("Please give me an Youtube url")
+    else:
+        url = sys.argv[1]
+        print("Get url from command line\n%s"%url)
+
+        try:
+            html = YouTubeHTML(url)
+            writer = READMEWriter(html)
+            writer.write()
+
+        except KeyboardInterrupt:
+            print("Ctrl-C clicked!\nBye!")
+
+        finally:
+            print("Writing done!")
+
+
 # http://img.youtube.com/vi/gmvwZRwn-j0/0.jpg
 # https://www.youtube.com/watch?v=gmvwZRwn-j0/0.jpg
