@@ -936,7 +936,7 @@ case class Cons[A](val head: A, val tail: LinkedList[A]) extends LinkedList[A] {
 }
 ```
 
-## [Patter matching](https://twitter.github.io/scala_school/basics2.html)
+## [Pattern matching](https://twitter.github.io/scala_school/basics2.html)
 ```scala
 val times = 1
 
@@ -1155,13 +1155,33 @@ threads.foreach(_.start())
 // Random output...
 ```
 
-### Multithreading: Synchronization – start/join
+### [The most frequent item in collection](http://stackoverflow.com/questions/13878104/finding-the-most-frequent-common-element-in-a-collection)
 ```scala
+val list = List(1, 3, 4, 4, 2)
+list.groupBy(identity).maxBy(_._2.size)._1   // => 4
 
+// If you're worried about the overhead of building up the lists for each value when you only need counts, you could do the following:
+list.foldLeft(Map.empty[Int, Int].withDefaultValue(0)) {
+  case (m, v) => m.updated(v, m(v) + 1)
+}.maxBy(_._2)._1
+
+// Or even keep track of the maximum as you go, to avoid the extra traversal at the end:
+list.foldLeft(
+  Map.empty[Int, Int].withDefaultValue(0), -1 -> Double.NegativeInfinity
+) {
+  case ((m, (maxV, maxCount)), v) =>
+    val count = m(v) + 1
+    if (count > maxCount) (m.updated(v, count), v -> count)
+    else (m.updated(v, count), maxV -> maxCount)
+}._2._1
 ```
 
-##
+## Count the number of occurrences in collection
 ```scala
+val s = Seq("apple", "oranges", "apple", "banana", "apple", "oranges", "oranges")
+
+s.groupBy(identity).mapValues(_.size)
+// Map(banana -> 1, oranges -> 3, apple -> 3)
 
 ```
 
