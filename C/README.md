@@ -460,6 +460,53 @@ int main(void) {
 }
 ```
 
+## [Compiling and Running the Code](https://devblogs.nvidia.com/parallelforall/easy-introduction-cuda-c-and-c/)
+```bash
+nvcc -o saxpy saxpy.cu
+
+./saxpy
+```
+
+##
+```c
+
+```
+##
+```c
+
+```
+##
+```c
+
+```
+##
+```c
+
+```
+##
+```c
+
+```
+##
+```c
+
+```
+##
+```c
+
+```
+##
+```c
+
+```
+##
+```c
+
+```
+##
+```c
+
+```
 ##
 ```c
 
