@@ -1,3 +1,17 @@
+## Disk usage
+```bash
+du -sh      // Current directory
+du -sh ~    // Home directory
+du -sh *    // Item-wise inside directory
+
+df -h       // Entire file system 
+```
+
+##
+```bash
+
+```
+
 ### Find IP and MAC addresses of devices in the network
 ```bash
 ifconfig | grep broadcast | arp -a
@@ -27,7 +41,7 @@ umount remote_home
 ```
 
 ```bash
-brew install sshfs 
+brew install sshfs
 ```
 
 ##

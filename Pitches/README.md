@@ -28,6 +28,14 @@
 * Coach-ability – Ability to listen to VCs
 
 
+## [Growth hacking]
+
+## [User stream]
+* Google analytics, Facebook
+* More General the users are the cheaper the marketing fee is.
+* How long do they stay? => Life time value
+* Value >= 3 * acquisition cost => GOOD
+
 ## To Watch
 * https://www.youtube.com/watch?v=PxQvxlGFHpY
 * https://www.youtube.com/watch?v=aNfB4sBBwEc
