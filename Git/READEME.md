@@ -55,15 +55,19 @@ git reset HEAD path/to/unwanted_file
 // Finally
 git commit -c ORIG_HEAD  
 ```
-**Thanks for this. It's worth adding that if you have already pushed your earlier (wrong) commit, and now try to `git push` your fix up to your repo, it will complain `Updates were rejected because the tip of your current branch is behind its remote counterpart.`. If you're sure that you want to push them (e.g. it's your fork) then you could use the -f option to force the push, e.g. `git push origin master -f`. (Do not do this to an upstream repo that others are fetching from) "
-##
-```bash
+**Thanks for this. It's worth adding that if you have already pushed your earlier (wrong) commit, and now try to `git push` your fix up to your repo, it will complain `Updates were rejected because the tip of your current branch is behind its remote counterpart.`. If you're sure that you want to push them (e.g. it's your fork) then you could use the -f option to force the push, e.g. `git push origin master -f`. (Do not do this to an upstream repo that others are fetching from)**
 
+## Compare branches
+```bash
+git diff branch_1..branch_2
+
+git diff branch_1...branch_2    // Ancestors
 ```
 
-##
+## Submodules
 ```bash
-
+git submodule init
+git submodule update
 ```
 
 ##
