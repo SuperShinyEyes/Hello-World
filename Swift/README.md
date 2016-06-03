@@ -602,6 +602,11 @@ hello.substringWithRange(Range<String.Index>(start: hello.startIndex.advancedBy(
 hello.appendContentsOf("koko")
 hello.capitalizedString
 hello.insertContentsOf("koko".characters, at: hello.startIndex.advancedBy(3))
+hello.startIndex
+hello.endIndex
+hello.hasPrefix("he")
+hello.lowercaseString
+hello.componentsSeparatedByString("l")
 ```
 
 
@@ -864,22 +869,52 @@ func ==(lhs: Image, rhs: Image) -> Bool {
 }
 ```
 
-##
+## Optionals can be chained
 ```swift
+var UILabel?
+if let label = display {
+    if let text = label.text {
+        let x = text.hashValue
+    }
+}
 
+// or
+
+if let x: Optional<Int> = display?.text?.hashValue { ... }
 ```
 
-##
+## ??
 ```swift
+let s: String? = ...
+if s != nil {
+    display.text = s
+} else {
+    display.text = " "
+}
 
+// or
+display.text = s ?? " "
 ```
 
-##
+## Tuples
 ```swift
+let x: (String, Int, Double) = ("hello", 5, 5.4)
+let (word, number, value) = x
 
+// or
+let x: (w: String, i: Int, v: Double) = ("hello", 5, 5.4)
+print(x.w)
 ```
 
+## Classes vs. structs vs. enums
+![Classes vs. structs vs. enums](/images/Classes vs. structs vs. enums.png)
+
+## Swift Methods
+![SwiftMethods](/images/SwiftMethods.png)
+![SwiftMethods](/images/SwiftMethods2.png)
+
 ##
+
 ```swift
 
 ```
