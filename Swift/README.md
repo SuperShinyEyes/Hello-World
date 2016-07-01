@@ -2,6 +2,35 @@
 * http://ericasadun.com/2014/06/13/swift-those-ing-swift-variables-unwrapping-and-implicit-unwrapping/
 * https://www.andrewcbancroft.com/2015/05/08/strong-weak-and-unowned-sorting-out-arc-and-swift/
 
+## Sequence methods
+* map
+* contains
+* dropFirst
+* dropFirst(num: Int)
+* dropLast
+* dropLast(num: Int)
+* reduce
+* reverse
+* flatMap
+* lexicographicalCompare
+* elementsEqual
+* enumerate
+* flatten
+* forEach
+* generate: creates a generator
+* joinWithSeparator
+  * `["foo", "bar", "baz"].joinWithSeparator("-|-") // "foo-|-bar-|-baz"`
+* maxElement
+* minElement
+* prefix => `take`
+* sort
+* split
+* startsWith
+* suffix => `takeRight`
+* underestimateCount
+  * Returns a value less than or equal to the number of elements in self, nondestructively.
+  * Does not consume a sequence
+
 ## guard
 ```swift
 func session(session: WCSession, didReceiveMessage message: [String: AnyObject]) {
@@ -913,68 +942,296 @@ print(x.w)
 ![SwiftMethods](/images/SwiftMethods.png)
 ![SwiftMethods](/images/SwiftMethods2.png)
 
-##
+## If let optional
+```swift
+@IBAction func touchDigit(sender: UIButton) {
+        if let digit = sender.currentTitle as String! {
+            print("\(digit)")
+        } else {
+            print("No data")
+        }
+    }
+```
+
+## Struct doesn't need init()
+```swift
+struct Character {
+   enum CharacterType {
+    case Thief
+    case Warrior
+    case Knight
+  }
+  enum Weapon {
+    case Bow
+    case Sword
+    case Lance
+    case Dagger
+  }
+  let type: CharacterType
+  let weapon: Weapon
+}
+
+let warrior = Character(type: .Warrior, weapon: .Sword)
+```
+
+## [Pattern matching](https://appventure.me/2015/08/20/swift-pattern-matching-in-detail/)
+```swift
+enum TraderType {
+case SingleGuy
+case Company
+}
+
+enum Trades {
+    case Buy(stock: String, amount: Int, stockPrice: Float, type: TraderType)
+    case Sell(stock: String, amount: Int, stockPrice: Float, type: TraderType)
+}
+
+let aTrade = Trades.Sell(stock: "GOOG", amount: 100, stockPrice: 666.0, type: TraderType.Company)
+
+switch aTrade {
+case let .Buy(stock, amount, _, TraderType.SingleGuy):
+    processSlow(stock, amount, 5.0)
+case let .Sell(stock, amount, _, TraderType.SingleGuy):
+    processSlow(stock, -1 * amount, 5.0)
+case let .Buy(stock, amount, _, TraderType.Company):
+    processFast(stock, amount, 2.0)
+case let .Sell(stock, amount, _, TraderType.Company):
+    processFast(stock, -1 * amount, 2.0)
+}
+```
+
+### Wild card pattern
+```swift
+let p: String? = nil
+switch p {
+case _?: print ("Has String")
+case nil: print ("No String")
+}
+```
+
+### Tuple Pattern
+```swift
+let age = 23
+let job: String? = "Operator"
+let payload: AnyObject = NSDictionary()
+
+switch (age, job, payload) {
+  case (let age, _?, _ as NSDictionary):
+  print(age)
+  default: ()
+}
+```
+
+### Expression pattern
+```swift
+switch 5 {
+  case 0...10: print("In range 0-10")
+  default: break
+}
+```
 
 ```swift
+struct Soldier {
+    let hp: Int
+    let x: Int
+    let y: Int
+}
 
+extension Soldier {
+    func unapply() -> (Int, Int, Int) {
+        return (self.hp, self.x, self.y)
+    }
+}
+
+func ~= (p: (Int, Int, Int), t: (Int, Int, Int)) -> Bool {
+    return p.0 == t.0 && p.1 == t.1 && p.2 == t.2
+}
+
+let soldier = Soldier(hp: 99, x: 10, y: 10)
+print(soldier.unapply() ~= (99, 10, 10))
+```
+
+## init(_ val: Int)
+```swift
+struct Celsius {
+    var temperature: Double
+
+    init(fromFahrenheit fahrenheit: Double) {
+        temperature = (fahrenheit - 32) / 1.8
+    }
+
+    init(fromKelvin kelvin: Double) {
+        temperature = kelvin - 273.15
+    }
+
+    init(_ celsius: Double) {
+        temperature = celsius
+    }
+}
+
+let boilingPointOfWater = Celsius(100)
+let freezingPointOfWater = Celsius(fromKelvin: 273.15)
+```
+
+## Fallthrough
+```swift
+switch 5 {
+   case 5:
+    print("Is 5")
+    fallthrough
+   default:
+    print("Is a number")
+}
+// Will print: "Is 5" "Is a number"
+```
+
+## Loop in pattern matching
+```swift
+gameLoop: while true {
+  switch state() {
+     case .Waiting: continue gameLoop
+     case .Done: calculateNextState()
+     case .GameOver: break gameLoop
+  }
+}
+```
+
+## Optional pattern matching
+```swift
+var result: String? = secretMethod()
+switch result {
+case nil:
+    print("is nothing")
+case let a?:
+    print("\(a) is a value")
+}
+```
+
+## filter, map, flatMap
+```swift
+let wordFreqs = [("k", 5), ("a", 7), ("b", 3)]
+let res2 = wordFreqs.filter({ e in e.1 > 3 }).map {$0.0}
+// ["k", "a"]
+let res3 = wordFreqs.filter({ $0.1 > 3 }).map {$0.0}
+
+let res4 = wordFreqs.flatMap { (e) -> String? in
+    switch e {
+    case let (s, t) where t > 3: return s
+    default: return nil
+    }
+}
+
+let res5 = wordFreqs.flatMap { (e) -> String? in if e.1 > 3 {return e.0} else {return nil}
+}
+```
+
+## [`guard let case` vs. `if let case`](http://alisoftware.github.io/swift/pattern-matching/2016/05/16/pattern-matching-4/)
+
+* `guard` ensures you not to "fallthrough"
+* `guard` must **return** or **continue** when the pattern doesn't match =>
+  * `guard` mostly used inside functions
+  * inside a `for-loop` with `continue`
+* `if let case` can be used anywhere and doesn't need to return anything.
+* `if case let x = y { … }` === `switch y { case let x: … }`
+
+
+```swift
+enum Media {
+  case Book(title: String, author: String, year: Int)
+  case Movie(title: String, director: String, year: Int)
+  case WebSite(urlString: String)
+}
+let m = Media.Movie(title: "Captain America: Civil War", director: "Russo Brothers", year: 2016)
+
+// if case let
+if case let Media.Movie(title, _, _) = m {
+  print("This is a movie named \(title)")
+}
+
+// switch
+switch m {
+  case let Media.Movie(title, _, _):
+    print("This is a movie named \(title)")
+  default: () // do nothing, but this is mandatory as all switch in Swift must be exhaustive
+}
+
+// if case let where
+if case let Media.Movie(_, _, year) = m where year < 1888 {
+    print("Something seems wrong: the movie's year is before the first movie ever made.")
+  }
+```
+```swift
+// guard case let
+enum NetworkResponse {
+  case Response(NSURLResponse, NSData)
+  case Error(NSError)
+}
+
+func processRequestResponse(response: NetworkResponse) {
+  guard case let .Response(urlResp, data) = response,
+    let httpResp = urlResp as? NSHTTPURLResponse
+    where 200..<300 ~= httpResp.statusCode else {
+      print("Invalid response, can't process")
+      return
+  }
+  print("Processing \(data.length) bytes…")
+  /* … */
+}
+```
+`for case` is like `if case` inside a for-loop
+```swift
+let mediaList: [Media] = [
+  .Book(title: "Harry Potter and the Philosopher's Stone", author: "J.K. Rowling", year: 1997),
+  .Movie(title: "Harry Potter and the Philosopher's Stone", director: "Chris Columbus", year: 2001),
+  .Book(title: "Harry Potter and the Chamber of Secrets", author: "J.K. Rowling", year: 1999),
+  .Movie(title: "Harry Potter and the Chamber of Secrets", director: "Chris Columbus", year: 2002),
+  .Book(title: "Harry Potter and the Prisoner of Azkaban", author: "J.K. Rowling", year: 1999),
+  .Movie(title: "Harry Potter and the Prisoner of Azkaban", director: "Alfonso Cuarón", year: 2004),
+  .Movie(title: "J.K. Rowling: A Year in the Life", director: "James Runcie", year: 2007),
+  .WebSite(urlString: "https://en.wikipedia.org/wiki/List_of_Harry_Potter-related_topics")
+]
+
+for case let Media.Movie(title, director, year) in mediaList where director == "Chris Columbus" {
+  print(" - \(title) (\(year))")
+}
+// - Harry Potter and the Philosopher's Stone (2001)
+// - Harry Potter and the Chamber of Secrets (2002)
+
+for media in mediaList {
+    guard let title = media.title else { continue }
+    guard title.hasPrefix("Harry Potter") else { continue }
+    print(" - [\(media.kind)] \(title)")
+}
 ```
 
 ##
 ```swift
-
 ```
 
 ##
 ```swift
-
 ```
 
 ##
 ```swift
-
 ```
 
 ##
 ```swift
-
 ```
 
 ##
 ```swift
-
 ```
 
 ##
 ```swift
-
 ```
 
 ##
 ```swift
-
 ```
 
 ##
 ```swift
-
-```
-
-##
-```swift
-
-```
-
-##
-```swift
-
-```
-
-##
-```swift
-
-```
-
-##
-```swift
-
 ```
