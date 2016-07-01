@@ -3,33 +3,48 @@
 * https://www.andrewcbancroft.com/2015/05/08/strong-weak-and-unowned-sorting-out-arc-and-swift/
 
 ## Sequence methods
-* map
-* contains
-* dropFirst
-* dropFirst(num: Int)
-* dropLast
-* dropLast(num: Int)
-* reduce
-* reverse
-* flatMap
-* lexicographicalCompare
-* elementsEqual
-* enumerate
-* flatten
-* forEach
-* generate: creates a generator
-* joinWithSeparator
+* `map`
+* `contains`
+* `dropFirst`
+* `dropFirst(num: Int)`
+* `dropLast`
+* `dropLast(num: Int)`
+* `reduce`
+* `reverse`
+* `flatMap`
+* `lexicographicalCompare`
+* `elementsEqual`
+* `enumerate`
+* `flatten`
+* `forEach`
+* `generate: creates a generator`
+* `joinWithSeparator`
   * `["foo", "bar", "baz"].joinWithSeparator("-|-") // "foo-|-bar-|-baz"`
-* maxElement
-* minElement
-* prefix => `take`
-* sort
-* split
-* startsWith
-* suffix => `takeRight`
-* underestimateCount
+* `maxElement`
+* `minElement`
+* `prefix` => `take`
+* `sort`
+* `split`
+* `startsWith`
+* `suffix` => `takeRight`
+* `underestimateCount`
   * Returns a value less than or equal to the number of elements in self, nondestructively.
   * Does not consume a sequence
+
+## String methods
+* `startIndex`
+* `endIndex`
+* `hasPrefix`
+* `hasSuffix`
+* `capitalizedString`
+* `lowercaseString`
+* `uppercaseString`
+* `componentsSeparatedByString(String)`
+
+## `as?`, `as!`, `is`
+* Conversion for `Anyobject`
+* Type casting between parent–child classes
+
 
 ## guard
 ```swift
@@ -1204,8 +1219,10 @@ for media in mediaList {
 }
 ```
 
-##
+## Fonts
 ```swift
+static func preferredFontForTextStyle(UIFontTextStyle) -> UIFont
+// UIFontTextStyle.Body, UIFontTextStyle.Footernote, etc.
 ```
 
 ##
