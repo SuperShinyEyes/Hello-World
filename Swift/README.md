@@ -1224,17 +1224,55 @@ for media in mediaList {
 static func preferredFontForTextStyle(UIFontTextStyle) -> UIFont
 // UIFontTextStyle.Body, UIFontTextStyle.Footernote, etc.
 ```
-
-##
+## Protocls
+### `weak` in closure
+![weak_in_closures](/images/weak_in_closures.png)
 ```swift
+protocol Moveable {
+    mutating func moveTo(p: CGPoint)
+}
+class Car: Moveable {
+    func moveTo(p: CGPoint) {...}
+    func changeOil()
+}
+struct Shape: Moveable {
+    mutating func moveTo(p: CGPoint) { ... }
+    func draw()
+}
+
+let prius: Car = Car()
+let square: Shape = Shape()
+
+var thingToMove: Moveable = prius
+thingToMove.moveTo(...)     // Works
+thingToMove.changeOil(...)  // Fails
+thingToMove = square
+let thingsToMove: [Moveable] = [prius, square]
+
+func slide(slider: Moveable) {
+    let positionToSlideTo = ..
+    slider.moveTo(positionToSlideTo)
+}
+slide(prius); slide(square)
+// x must inherit Slippery and Moveable
+func slipAndSlide(x: protocol<Slippery, Moveable>)
+slipAndSlide(prius)  // Fails
 ```
 
-##
+## Get time interval/difference
 ```swift
+NSDate().timeIntervalSinceNow
 ```
 
-##
+## Fetch data from the Internet
 ```swift
+private func fetchImage() {
+    if let url = imageURL {
+        if let imageData = NSData(contentsOfURL: url) {
+            image = UIImage(data: imageData)
+        }
+    }
+}
 ```
 
 ##
