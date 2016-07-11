@@ -1275,6 +1275,81 @@ private func fetchImage() {
 }
 ```
 
+## Multithreading
+### Executing a function on another queue
+```swift
+let queue: dispatch_queue_t = // get the queue you want
+dispatch_async(queue) { /* Do what you want to do in the closure */ }
+```
+### Main queue(a *serial* queue)
+```swift
+let mainQ: dispatch_queue_t = dispatch_get_main_queue()
+// All UI stuff must be done on this queue
+// And all time-consuming stuff must be done off this queue
+dispatch_async(not the main queue){
+    // do a non-UI that might block or otherwise takes a while
+    dispatch_async(dispatch_get_main_queue()){
+        // call UI functions with the results of the above
+    }
+}
+```
+### Non-main-queues
+```swift
+// QOS = Quality of Service
+QOS_CLASS_USER_INTERACTIVE  // quick and high priority
+QOS_CLASS_USER_INITIATED    // high priority, might take time
+QOS_CLASS_UTILITY           // long running
+QOS_CLASS_BACKGROUND        // user not concerned with this (prefetching, etc)
+let queue = dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)  
+// 0 is a "reserved for future"
+```
+### You can create your own serial queue
+```swift
+let serialQ = dispatch_queue_create("name", DISPATCH_QUEUE_SERIAL)
+```
+### Example
+```swift
+let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+if let url = NSURL(string: "http://url") {
+    let request = NSURLRequest(URL:url)
+    let task session.downloadTaskWithRequest(request) { (localURL, response, error) in
+        /* Do UI stuff AFTER you dispatch back to main queue while downloading  */
+        dispatch_async(dispatch_get_main_queue()) {
+            /* Do UI stuff here*/
+        }
+    }
+    task.resume()
+}
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
 ##
 ```swift
 ```
