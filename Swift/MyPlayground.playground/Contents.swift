@@ -3,21 +3,17 @@
 import UIKit
 
 
-func logIfNeeded(log: AnyObject, doWeWantToPrint: Bool=false) {
-    if doWeWantToPrint { print("\(log)") }
-}
+(0...10)
 
-print(true)
-logIfNeeded("sdf")
-logIfNeeded("asdf", doWeWantToPrint: true)
 
-extension Double {
-//    func isNeg()-> Bool = self < 0
-    var isNeg: Bool{ return self < 0 }
+extension SequenceType {
+    func count<U>(Element) -> Int {
+        var result: Int = 0
+        for x in self {
+            if x == Element {
+result += 1
 }
-
-var d: Double = -3
-if d.isNeg{
-    d = Double.abs(d)
+        }
+        return result
+    }
 }
-print(d)

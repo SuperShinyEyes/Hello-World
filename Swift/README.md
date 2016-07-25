@@ -1322,16 +1322,51 @@ if let url = NSURL(string: "http://url") {
 }
 ```
 
-##
+## Sort on transform
 ```swift
+people.sort { $0.name.uppercaseString < $1.name.uppercaseString }
 ```
 
-##
+## Custom Extensions
 ```swift
+let someArray: [SomeObject] = []
+
+var object: SomeObject?
+for oneObject in someArray where oneObject.passesTest() {
+    object = oneObject
+    break
+}
+
+// into
+extension SequenceType {
+    func findElement (match: Generator.Element->Bool) -> Generator.Element? {
+        for element in self where match(element) {
+            return element
+        }
+        return nil
+    }
+}
+let object = someArray.findElement { $0.passesTest() }
+
+// Use it like
+guard let object = someSequence.findElement({ $0.passesTest() })
+    else { return }
 ```
 
-##
+#### Accumulate
 ```swift
+extension Array {
+    func accumulate<U>(initial: U, combine: (U, Element) -> U) -> [U] {
+        var running = initial
+        return self.map { next in
+            running = combine(running, next)
+            return running
+        }
+    }
+}
+
+[1,2,3,4].accumulate(0, combine: +)
+// [1, 3, 6, 10]
 ```
 
 ##
