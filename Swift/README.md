@@ -1322,12 +1322,28 @@ if let url = NSURL(string: "http://url") {
 }
 ```
 
-## Sort on transform
+## UITextField
 ```swift
-people.sort { $0.name.uppercaseString < $1.name.uppercaseString }
+func textFieldDidEndEditing(sender: UITextField)
+var UITextAutocapitalizationType autocapitalizationType // words, sentence
+var UITextAutocorrectionType autocorrectionType // yes or no
+var UIReturnKeyType returnKeyType               // Go, Search, Google
+var BOOL secureTextEntry                        // for passwords
+var UIKeyboardType keyboardType                 // ASCII, URL, Phone pad
+
+
+NSNotificationCenter.defaultCenter().addObserver(self,
+                                        selector: "theKeyboardAppeared:",
+                                        name: UIKeyboardDidShowNotification,
+                                        object: view.window)
 ```
 
-## Custom Extensions
+## UITableView
+* UITableViewStyle.Plain
+  * dynamic
+* UITableViewStyle.Grouped
+  * static
+
 ```swift
 let someArray: [SomeObject] = []
 
