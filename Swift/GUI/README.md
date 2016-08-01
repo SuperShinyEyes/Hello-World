@@ -154,5 +154,3 @@ kCLLocationAccuracyThreeKilometers
 
 ```swift
 ```
-
-##
