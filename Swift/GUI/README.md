@@ -120,14 +120,25 @@ kCLLocationAccuracyKilometer
 kCLLocationAccuracyThreeKilometers
 ```
 
-##
-
+## Subview/layer order
 ```swift
+bringSubviewToFront:
+sendSubviewToBack:
+removeFromSuperview
+insertSubview:atIndex:
+insertSubview:aboveSubview:
+insertSubview:belowSubview:
+exchangeSubviewAtIndex:withSubviewAtIndex:
 ```
 
-##
+## Load a UIViewController as a subview on a UIView
 
 ```swift
+addSubview(viewController.view)
+// trigger the appear method
+addChildViewController(viewController)
+view.addsubView(viewController.view)
+viewController.didMoveToParentViewController(self)
 ```
 
 ##
