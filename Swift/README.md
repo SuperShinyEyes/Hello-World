@@ -1345,37 +1345,6 @@ NSNotificationCenter.defaultCenter().addObserver(self,
   * static
 
 
-## Variadic(multiple) parameters
-```swift
-func vari<N>(members: N...) {
-   for i in members {
-      println(i)
-   }
-}
-vari(4,3,5)
-vari(4.5, 3.1, 5.6)
-vari("Swift", "Enumerations", "Closures")
-```
-
-## Inout parameters
-```swift
-func temp(inout a1: Int, inout b1: Int) {
-   let t = a1
-   a1 = b1
-   b1 = t
-}
-var no = 2
-var co = 10
-temp(&no, &co)
-println("Swapped values are \(no), \(co)")
-```
-
-## [Resizable images](https://www.objc.io/issues/3-views/moving-pixels-onto-the-screen/#resizable-images)
-```swift
-func resizableImageWithCapInsets(_ capInsets: UIEdgeInsets,
-                    resizingMode resizingMode: UIImageResizingMode) -> UIImage
-```
-
 ##
 ```swift
 ```
