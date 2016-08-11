@@ -1344,6 +1344,82 @@ NSNotificationCenter.defaultCenter().addObserver(self,
 * UITableViewStyle.Grouped
   * static
 
+```swift
+let someArray: [SomeObject] = []
+
+var object: SomeObject?
+for oneObject in someArray where oneObject.passesTest() {
+    object = oneObject
+    break
+}
+
+// into
+extension SequenceType {
+    func findElement (match: Generator.Element->Bool) -> Generator.Element? {
+        for element in self where match(element) {
+            return element
+        }
+        return nil
+    }
+}
+let object = someArray.findElement { $0.passesTest() }
+
+// Use it like
+guard let object = someSequence.findElement({ $0.passesTest() })
+    else { return }
+```
+
+#### Accumulate
+```swift
+extension Array {
+    func accumulate<U>(initial: U, combine: (U, Element) -> U) -> [U] {
+        var running = initial
+        return self.map { next in
+            running = combine(running, next)
+            return running
+        }
+    }
+}
+
+[1,2,3,4].accumulate(0, combine: +)
+// [1, 3, 6, 10]
+```
+
+## Variadic(multiple) parameters
+```swift
+func vari<N>(members: N...) {
+   for i in members {
+      println(i)
+   }
+}
+vari(4,3,5)
+vari(4.5, 3.1, 5.6)
+vari("Swift", "Enumerations", "Closures")
+```
+
+## Inout parameters
+```swift
+func temp(inout a1: Int, inout b1: Int) {
+   let t = a1
+   a1 = b1
+   b1 = t
+}
+var no = 2
+var co = 10
+temp(&no, &co)
+println("Swapped values are \(no), \(co)")
+```
+
+## [Resizable images](https://www.objc.io/issues/3-views/moving-pixels-onto-the-screen/#resizable-images)
+```swift
+func resizableImageWithCapInsets(_ capInsets: UIEdgeInsets,
+                    resizingMode resizingMode: UIImageResizingMode) -> UIImage
+```
+
+
+##
+```swift
+```
 
 ##
 ```swift
