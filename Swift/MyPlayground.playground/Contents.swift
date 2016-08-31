@@ -1,67 +1,71 @@
 import UIKit
 
-public enum ValidationResult
-{
-    case Valid
-    case Invalid(errorMessage:String)
-}
-
-public func ==(lhs: ValidationResult, rhs: ValidationResult) -> Bool {
-    switch (lhs, rhs) {
-    case (.Valid, .Valid): return true
-    default: return false
+1
+2
+3
+4
+5
+6
+7
+class BankAccount {
+    var balance: Double = 0.0
+    
+    func deposit(amount: Double) {
+        balance += amount
     }
 }
 
-protocol FormFieldType
-{
-    associatedtype Type
-    
-    var value: Type? { get set }
-    
-    func validate() -> ValidationResult
+let account = BankAccount()
+account.deposit(100) //
+
+let depositor = BankAccount.deposit
+depositor(account)(100) // balance is now 200
+
+protocol TargetAction {
+    func performAction()
 }
 
-class TextField: UIView, FormFieldType {
-    typealias Type = String
+struct TargetActionWrapper<T: AnyObject> : TargetAction {
+    weak var target: T?
+    let action: (T) -> () -> ()
     
-    var value: String?
-    
-    func validate() -> ValidationResult {
-        return .Valid
+    func performAction() -> () {
+        if let t = target {
+            action(t)()
+        }
     }
 }
 
-class DatePicker: UIControl, FormFieldType {
-    typealias Type = NSDate
+enum ControlEvent {
+    case TouchUpInside
+    case ValueChanged
+    // ...
+}
+
+class Control {
+    var actions = [ControlEvent: TargetAction]()
     
-    var value: NSDate?
+    func setTarget<T: AnyObject>(target: T, action: (T) -> () -> (), controlEvent: ControlEvent) {
+        actions[controlEvent] = TargetActionWrapper(target: target, action: action)
+    }
     
-    func validate() -> ValidationResult {
-        return .Valid
+    func removeTargetForControlEvent(controlEvent: ControlEvent) {
+        actions[controlEvent] = nil
+    }
+    
+    func performActionForControlEvent(controlEvent: ControlEvent) {
+        actions[controlEvent]?.performAction()
     }
 }
 
-let firstName = TextField()
-let lastName = TextField()
-let date = DatePicker()
-
-//let fields: [FormFieldType] = [firstName, lastName, date]
-
-struct AnyField {
-    private let _validate: () -> ValidationResult
+class MyViewController {
+    let button = Control()
     
-    init<Field: FormFieldType>(_ field: Field) {
-        self._validate = field.validate
+    func viewDidLoad() {
+        button.setTarget(self, action: MyViewController.onButtonTap, controlEvent: .TouchUpInside)
     }
     
-    func validate() -> ValidationResult {
-        return _validate()
+    func onButtonTap() {
+        print("Button was tapped")
     }
 }
-
-let fields = [AnyField(firstName), AnyField(lastName), AnyField(date)]
-if fields.reduce(true, combine: { ($1.validate() == .Valid) && $0 }) {
-    print("Form is valid 🎉")
-}
-

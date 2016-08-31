@@ -1,6 +1,115 @@
-## References
-* http://ericasadun.com/2014/06/13/swift-those-ing-swift-variables-unwrapping-and-implicit-unwrapping/
-* https://www.andrewcbancroft.com/2015/05/08/strong-weak-and-unowned-sorting-out-arc-and-swift/
+## [Type Erasure](https://romain-pouclet.com/2016/08/21/type-erasure-maybe/)
+```swift
+public enum ValidationResult{
+    case Valid
+    case Invalid(errorMessage:String)
+}
+
+public func ==(lhs: ValidationResult, rhs: ValidationResult) -> Bool {
+    switch (lhs, rhs) {
+    case (.Valid, .Valid): return true
+    default: return false
+    }
+}
+
+protocol FormFieldType{
+    associatedtype Type
+    var value: Type? { get set }
+    func validate() -> ValidationResult
+}
+
+class TextField: UIView, FormFieldType {
+    typealias Type = String
+    var value: String?
+    func validate() -> ValidationResult {
+        return .Valid
+    }
+}
+
+class DatePicker: UIControl, FormFieldType {
+    typealias Type = NSDate
+    var value: NSDate?
+    func validate() -> ValidationResult {
+        return .Valid
+    }
+}
+
+let firstName = TextField()
+let lastName = TextField()
+let date = DatePicker()
+//let fields: [FormFieldType] = [firstName, lastName, date]
+// ⚠️ Protocol 'FormFieldType' can only be used as a generic constraint
+// because it has Self or associated type requirements
+
+struct AnyField {
+    private let _validate: () -> ValidationResult
+
+    init<Field: FormFieldType>(_ field: Field) {
+        self._validate = field.validate
+    }
+
+    func validate() -> ValidationResult {
+        return _validate()
+    }
+}
+
+let fields = [AnyField(firstName), AnyField(lastName), AnyField(date)]
+if fields.reduce(true, combine: { ($1.validate() == .Valid) && $0 }) {
+    print("Form is valid 🎉")
+}
+```
+
+## [Implementing Target-Action in Swift](https://oleb.net/blog/2014/07/swift-instance-methods-curried-functions/)
+```swift
+protocol TargetAction {
+    func performAction()
+}
+
+struct TargetActionWrapper<T: AnyObject> : TargetAction {
+    weak var target: T?
+    let action: (T) -> () -> ()
+
+    func performAction() -> () {
+        if let t = target {
+            action(t)()
+        }
+    }
+}
+
+enum ControlEvent {
+    case TouchUpInside
+    case ValueChanged
+    // ...
+}
+
+class Control {
+    var actions = [ControlEvent: TargetAction]()
+
+    func setTarget<T: AnyObject>(target: T, action: (T) -> () -> (), controlEvent: ControlEvent) {
+        actions[controlEvent] = TargetActionWrapper(target: target, action: action)
+    }
+
+    func removeTargetForControlEvent(controlEvent: ControlEvent) {
+        actions[controlEvent] = nil
+    }
+
+    func performActionForControlEvent(controlEvent: ControlEvent) {
+        actions[controlEvent]?.performAction()
+    }
+}
+
+class MyViewController {
+    let button = Control()
+
+    func viewDidLoad() {
+        button.setTarget(self, action: MyViewController.onButtonTap, controlEvent: .TouchUpInside)
+    }
+
+    func onButtonTap() {
+        print("Button was tapped")
+    }
+}
+```
 
 ## Sequence methods
 * `map`
