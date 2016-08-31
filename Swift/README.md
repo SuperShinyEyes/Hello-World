@@ -45,64 +45,20 @@
 * Conversion for `Anyobject`
 * Type casting between parent–child classes
 
-
-## guard
+## Swift pattern matching
 ```swift
-func session(session: WCSession, didReceiveMessage message: [String: AnyObject]) {
-    guard message["request"] as? String == "fireLocalNotification" else{
-        return
+public func ==(lhs: SimpleToken, rhs: SimpleToken) -> Bool {
+    switch (lhs, rhs) {
+    case (.Name(let a),   .Name(let b))   where a == b: return true
+    case (.Number(let a), .Number(let b)) where a == b: return true
+    default: return false
     }
-
-    let localNotification = buildLocalNotifcation()
-    UIApplication.sharedApplication().scheduleLocalNotification(localNotification)
 }
 ```
+
 ![watchOS-structure](/images/watchOS-structure.png)
 
 ## [Automatic Reference Counting](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html)
-### Example of circular reference
-```swift
-class Person {
-    let name: String
-    init(name: String) { self.name = name }
-    var apartment: Apartment?
-    deinit { print("\(name) is being deinitialized") }
-}
-
-class Apartment {
-    let unit: String
-    init(unit: String) { self.unit = unit }
-    var tenant: Person?
-    deinit { print("Apartment \(unit) is being deinitialized") }
-}
-```
-![referenceCycle02_2x.png](/images/referenceCycle02_2x.png)
-### Solve with weak
-```swift
-class Person {
-    let name: String
-    init(name: String) { self.name = name }
-    var apartment: Apartment?
-    deinit { print("\(name) is being deinitialized") }
-}
-
-class Apartment {
-    let unit: String
-    init(unit: String) { self.unit = unit }
-    weak var tenant: Person?
-    deinit { print("Apartment \(unit) is being deinitialized") }
-}
-
-var john: Person?
-var unit4A: Apartment?
-
-john = Person(name: "John Appleseed")
-unit4A = Apartment(unit: "4A")
-
-john!.apartment = unit4A
-unit4A!.tenant = john
-```
-![weakReference01_2x.png](/images/weakReference01_2x.png)
 
 ### Unowned reference
 ```swift
@@ -337,83 +293,6 @@ class Directory : FileSystemItem {
 }
 ```
 
-
-## Where clause with optional
-```swift
-if let firstNumber = Int("4"), secondNumber = Int("42") where firstNumber < secondNumber {
-    print("\(firstNumber) < \(secondNumber)")
-}
-// prints "4 < 42"
-```
-
-
-## Initialize an empty array
-```swift
-var operandStack: Array<Double> = Array<Double>()
-```
-
-## Properties
-### Read-only properties
-```swift
-struct Cuboid {
-    var width = 0.0, height = 0.0, depth = 0.0
-    var volume: Double {
-        return width * height * depth
-    }
-}
-```
-
-### Getter & Setter
-If a computed property’s setter does not define a name for the new value to be set, a default name of newValue is used.
-```swift
-struct AlternativeRect {
-    var origin = Point()
-    var size = Size()
-    var center: Point {
-        get {
-            let centerX = origin.x + (size.width / 2)
-            let centerY = origin.y + (size.height / 2)
-            return Point(x: centerX, y: centerY)
-        }
-        set {
-        // Or you could have given a parameter name
-        // set(newCenter) {
-
-            origin.x = newValue.x - (size.width / 2)
-            origin.y = newValue.y - (size.height / 2)
-        }
-    }
-}
-```
-
-### willSet & didSet
-```swift
-class StepCounter {
-    var totalSteps: Int = 0 {
-        willSet(newTotalSteps) {
-            print("About to set totalSteps to \(newTotalSteps)")
-        }
-        didSet {
-            if totalSteps > oldValue  {
-                print("Added \(totalSteps - oldValue) steps")
-            }
-        }
-    }
-}
-let stepCounter = StepCounter()
-stepCounter.totalSteps = 200
-// About to set totalSteps to 200
-// Added 200 steps
-stepCounter.totalSteps = 360
-// About to set totalSteps to 360
-// Added 160 steps
-stepCounter.totalSteps = 896
-// About to set totalSteps to 896
-// Added 536 steps
-```
-
-## Clojure
-
 ### Pass function as a parameter
 ```swift
 func performOperation(operation: (Double, Double) -> Double) {
@@ -529,25 +408,6 @@ init() {
 }
 ```
 
-## Struct
-```swift
-struct MyStruct {
-    var x: Int 42
-    var y: String "haha"
-
-    init(x: Int, y: String)  // default
-}
-```
-
-
-## Range
-```swift
-let array = [1,2,3,4,5]
-let arraySimple = array[1...5]
-let arraySimple2 = array[1..<6]
-for i in [1...10] {}
-```
-
 ## Swift & Objective-C lasses
 * NSObject
     * Base class for all Objective-C classes. Some advanced features will require you to subclass from NSObject
@@ -560,82 +420,7 @@ for i in [1...10] {}
 * NSData
     * A "bag o' bits"
 
-## Lazy Initialization
-### Only 'var' can be *lazy*!
-```swift
-lazy var someProperty: Type = {
-    // Construct the value of someProperty
-    return <the constructed value>
-}
-
-lazy var myProperty = self.initializeMyProperty()
-```
-
-## Failable init
-```swift
-init?(arg1: Type1, ...) {
-    // might return nil
-}
-
-if let image = UIImage(named: "foo") {
-    // image was successfully created
-} else {
-    // couldn't create the image
-}
-
-```
-
-## AnyObject – it's a protocol
-```swift
-var destinationViewController: AnyObject
-
-// Generally,
-if let calcVC = destinationViewController as? CalculatorViewController {
-    // iff destinationViewController was a type of CalculatorViewController
-}
-
-// Check before we even try to do as with the is keyword,
-if destinationViewController is CalculatorViewC ontroller { }
-```
-### Caseting Arrays of AnyObject
-```swift
-var toolbarItems: [AnyObject]
-for item in toolbarItems {
-    if let toolbarItem = item as? UIBarButtonItem { }
-}
-
-// If you know the types for sure
-for toolbarItem in toolbarItems as [UIBarButtonItem] {
-    // crashes if it's nil. Can't use 'as?'
-}
-```
-
-### More examples on AnyObject
-```swift
-// Create a button in code
-let button: AnyObject = UIButton.buttonWithType(UIButtonType.System)
-
-let title = (button as UIButton).currentTitle  // Crashes if not UIButton
-```
-
 ## Methods
-### Array<T>
-```swift
-var a = [1,2,3]
-a += [4,5,6]
-// append(T)
-// insert(T, atIndex: Int)
-// splice(Array<T>, atIndex: Int)
-// removeAtIndex(Int)
-// removeRange(Range)
-// replaceRange(Range, [T])
-// a.sort
-// a.sort {$0 > $1}
-// a.filter {_ % 2 == 0}
-let stringified: [String] = a.map { "\($0)" }
-let reduced: Int = a.reduce(0) {$0 + $1}
-```
-
 ### String
 ```swift
 var hello = "hello"
@@ -653,19 +438,6 @@ hello.lowercaseString
 hello.componentsSeparatedByString("l")
 ```
 
-
-## Type Conversion
-Convert by creating a new object
-```swift
-let d: Double = 37.5
-let f: Float = 37.5
-let x = Int(d)
-let xd = Double(x)
-let cgf = CGFloat(d)
-String(42)
-```
-
-
 ## Drawing
 ```swift
 @IBDesignable
@@ -674,7 +446,6 @@ class ....      // View the drawing on storyboard on-the-fly
 @IBInspectable
 var ....        // Access the field on right side inspection tool
 ```
-
 
 ## Constraining value range
 ```swift
@@ -723,32 +494,6 @@ jbl.currentLevel = 5
 print(AudioChannel.maxInputLevelForAllChannels)  // 5
 ```
 
-```swift
-struct SomeStructure {
-    static var storedTypeProperty = "Some value."
-    static var computedTypeProperty: Int {
-        return 1
-    }
-}
-enum SomeEnumeration {
-    static var storedTypeProperty = "Some value."
-    static var computedTypeProperty: Int {
-        return 6
-    }
-}
-class SomeClass {
-    static var storedTypeProperty = "Some value."
-    static var computedTypeProperty: Int {
-        return 27
-    }
-    // Below can be overrided by subclasses
-    class var overrideableComputedTypeProperty: Int {
-        return 107
-    }
-}
-```
-
-
 ## [Heterogenous vs. Homogenous containers](https://medium.com/ios-os-x-development/heterogeneous-vs-homogeneous-generics-630971626b7d#.tse64or9q)
 ![heterogenous_vs_homogenous](/images/heterogenous_vs_homogenous.png)
 
@@ -775,7 +520,6 @@ func binarySearch<T : Ordered>(sortedKeys: [T], forKey k: T) -> Int {
   return lo
 }
 ```
-
 
 ## Implement protocol as a class
 ```swift

@@ -1,72 +1,67 @@
 import UIKit
-import PlaygroundSupport
 
-@objc class ViewExpander: NSObject {
-    var viewToChange: UIView
-    var heightConstraint: NSLayoutConstraint
-    
-    init(viewToChange: UIView, heightConstraint: NSLayoutConstraint) {
-        self.viewToChange = viewToChange
-        self.heightConstraint = heightConstraint
-    }
-    
-    @objc func toggleHeight() {
-        if heightConstraint.constant == 100 {
-            heightConstraint.constant = 40
-        } else {
-            heightConstraint.constant = 100
-        }
-        
-        UIView.animate(withDuration: 0.5, delay: 0, options: [.beginFromCurrentState, .allowUserInteraction], animations: {
-            self.viewToChange.layoutIfNeeded()
-            }, completion: nil)
+public enum ValidationResult
+{
+    case Valid
+    case Invalid(errorMessage:String)
+}
+
+public func ==(lhs: ValidationResult, rhs: ValidationResult) -> Bool {
+    switch (lhs, rhs) {
+    case (.Valid, .Valid): return true
+    default: return false
     }
 }
 
-var demoView = UIView(frame: CGRect(origin: .zero, size: CGSize(width: 400, height: 400)))
-demoView.backgroundColor = .lightGray()
-
-var wrapperView = UIView(frame: .zero)
-wrapperView.backgroundColor = .white()
-demoView.addSubview(wrapperView)
-
-wrapperView.translatesAutoresizingMaskIntoConstraints = false
-
-var expandingView = UIView(frame: .zero)
-expandingView.backgroundColor = UIColor.red().withAlphaComponent(0.6)
-expandingView.translatesAutoresizingMaskIntoConstraints = false
-
-var nonExpandingView = UIButton(frame: .zero)
-nonExpandingView.backgroundColor = UIColor.yellow().withAlphaComponent(0.6)
-nonExpandingView.translatesAutoresizingMaskIntoConstraints = false
-
-wrapperView.addSubview(expandingView)
-wrapperView.addSubview(nonExpandingView)
-
-let expandingHeightConstraint = expandingView.heightAnchor.constraint(equalToConstant: 40)
-
-NSLayoutConstraint.activate([
+protocol FormFieldType
+{
+    associatedtype Type
     
-    wrapperView.centerXAnchor.constraint(equalTo: demoView.centerXAnchor),
-    wrapperView.centerYAnchor.constraint(equalTo: demoView.centerYAnchor),
+    var value: Type? { get set }
     
-    expandingView.topAnchor.constraint(equalTo: wrapperView.topAnchor, constant: 12),
-    wrapperView.bottomAnchor.constraint(equalTo: expandingView.bottomAnchor, constant: 12),
-    expandingView.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
-    expandingView.trailingAnchor.constraint(equalTo: wrapperView.centerXAnchor),
-    expandingView.widthAnchor.constraint(equalToConstant: 100),
+    func validate() -> ValidationResult
+}
+
+class TextField: UIView, FormFieldType {
+    typealias Type = String
     
-    nonExpandingView.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
-    nonExpandingView.leadingAnchor.constraint(equalTo: wrapperView.centerXAnchor),
-    nonExpandingView.centerYAnchor.constraint(equalTo: expandingView.centerYAnchor),
-    nonExpandingView.heightAnchor.constraint(equalToConstant: 40),
-    nonExpandingView.widthAnchor.constraint(equalToConstant: 100),
+    var value: String?
     
-    expandingHeightConstraint,
-    ])
+    func validate() -> ValidationResult {
+        return .Valid
+    }
+}
 
-let viewExpander = ViewExpander(viewToChange: wrapperView, heightConstraint: expandingHeightConstraint)
+class DatePicker: UIControl, FormFieldType {
+    typealias Type = NSDate
+    
+    var value: NSDate?
+    
+    func validate() -> ValidationResult {
+        return .Valid
+    }
+}
 
-nonExpandingView.addTarget(viewExpander, action: #selector(ViewExpander.toggleHeight), for: .touchUpInside)
+let firstName = TextField()
+let lastName = TextField()
+let date = DatePicker()
 
-PlaygroundPage.current.liveView = demoView
+//let fields: [FormFieldType] = [firstName, lastName, date]
+
+struct AnyField {
+    private let _validate: () -> ValidationResult
+    
+    init<Field: FormFieldType>(_ field: Field) {
+        self._validate = field.validate
+    }
+    
+    func validate() -> ValidationResult {
+        return _validate()
+    }
+}
+
+let fields = [AnyField(firstName), AnyField(lastName), AnyField(date)]
+if fields.reduce(true, combine: { ($1.validate() == .Valid) && $0 }) {
+    print("Form is valid 🎉")
+}
+
