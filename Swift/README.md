@@ -1270,24 +1270,95 @@ func resizableImageWithCapInsets(_ capInsets: UIEdgeInsets,
 ```
 
 
-##
+## NSTimer
 ```swift
+let timer = NSTimer.scheduledTimerWithTimeInterval(2.0,
+    target: self,
+    selector: #selector(fire),
+    userInfo: nil,
+    repeats: true
+)
+
+// tolerance helps system performance because it allows "late firing"
+timer.tolerance = 10 // seconds
+
+func fire(timer: NSTimer) {
+    let theTimersUserInfo = timer.userInfo
+
+    if done {
+        timer.invalidate()
+    }
+}
 ```
 
-##
+## UIView Animation
 ```swift
+if myView.alpha == 1.0 {
+    UIView.animateWithDuration(3.0,
+        delay: 2.0,
+        options: [UIViewAnimationOptions.CurveLinear],
+        animations: { myView.alpha = 0.0},
+        // completion: ((finished: Bool) -> Void)? )
+        completion: { if $0 { myView.removeFromSuperView() } })
+    )
+}
 ```
 
-##
+### UIView Animation – View transition
 ```swift
+UIView.transitionWithView(view: myPlayingCardView,
+    delay: 0.75,
+    options: [UIViewAnimationOptions.TransitionFlipFromLeft],
+    animations: { cardIsFaceUp = !cardIsFaceUp},
+    completion: nil)
+)
 ```
 
-##
+### UIView Animation – View hierarchy
 ```swift
+// If you want to use "hidden" property
+UIViewAnimationOptions.ShowHideTransitionViews
+
+UIView.transitionFromView(fromView: UIView,
+    fromView: UIView,
+    duration: NSTimer,
+    options: UIViewAnimationOptions,
+    completion: ((finished: Bool) -> Void)? )
+)
 ```
 
-##
+### Dynamic animation
 ```swift
+// Create a UIDynamicAnimator
+var animator = UIDynamicAnimator(referenceView: UIView)
+
+// Create and add UIDynamicBehavior
+let gravity = UIGravityBehavior()
+animator.addBehavior(gravity)
+
+let collider = UICollisionBehavior()
+animator.addBehavior(collider)
+
+// Add UIDynamicItems to a UIDynamicBehavior
+let item1: UIDynamicItem = ... // usually a UIView
+let item2: UIDynamicItem = ... // usually a UIView
+// Both will be affect by gravity
+// item1 will collide with boundaries or other items, but not with item2
+gravity.addItem(item1)
+collider.addItem(item1)
+gravity.addItem(item2)
+```
+
+## Memory Cycle Avoidance
+```swift
+if let pushBehavior = UIPushBehavior(items: [...], mode: .Instantaneous) {
+    pushBehavior.magnitude = ...
+    pushBehavior.angle = ...
+    pushBehavior.action = { [unowned pushBehavior] in
+        pushBehavior.dynamicAnimator!.removeBehavior(pushBehavior)
+    }
+    animator.addBehavior(pushBehavior)
+}
 ```
 
 ##

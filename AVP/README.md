@@ -20,7 +20,6 @@ Travel agencies, Heritage offices, City, dozens more......
 Policies, EU policy
 
 ## Questions
-
 ### How many visitors? 242 Cruise boats, +1 million people
 * Foreigners?
 * Finnish? 80%
