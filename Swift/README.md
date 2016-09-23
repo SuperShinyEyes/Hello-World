@@ -1361,6 +1361,101 @@ if let pushBehavior = UIPushBehavior(items: [...], mode: .Instantaneous) {
 }
 ```
 
+## Core Motion
+```swift
+// Checking availability
+var {accelerometer, gyro, magnetometer, deviceMotion}Available: Bool
+
+// Starting the hardware sensors collecting data
+func start{Accelerometer, Gyro, Magnetometer, DeviceMotion}Updates()
+
+// Is the hw currently collecting data?
+var {accelerometer, gyro, magnetometer, deviceMotion}Active: Bool
+
+// Stop the hw collecting data
+func stop{Accelerometer, Gyro, Magnetometer, DeviceMotion}Updates()
+
+// Registering a block to receive Accelerometer data
+func startAccelerometerUpdatestoQueue(queue: NSOperationQueue, withHandler: CMAccelerationHandler)
+typealias CMAccelerationHandler= (CMAccelerometerData?, NSError?) -> Void
+// queue can be an NSOperationQueue() you create or NSOperation.mainQueue (or currentQueue)
+
+func startDeviceMotionUpdatestoQueue(queue: NSOperationQueue, withHandler: CMDeviceMotionHandler)
+typealias CMDeviceMotionHandler= (CMDeviceMotion?, NSError?) -> Void
+/*
+Errors:
+    CMErrorDeviceRequiresMovement
+    CMErrorTrueNorthNotAvailable
+    CMErrorMotionActivityNotAvailable
+    CMErrorMotionActivityNotAuthorized
+*/
+```
+
+## CMDeviceMotion
+```swift
+/* Properties */
+
+// Accelerometer
+var gravity: CMAcceleration
+var userAcceleration: CMAcceleration  // gravity factored out using gyro
+
+// Gyro
+var rotationRate: CMRotationRate    // bias removed from raw data using accelerometer
+var attitude: CMAttitude            // device's attitude(orientation) in 3D space
+class CMAttitude: NSObject {        // roll, pitch and yaw are in radians
+    var roll: Double        // around longitudinal axis passing through top/bottom
+    var pitch: Double       // around lateral axis passing through sides
+    var yaw: Double         // around axis with origin at CofG and ㅗ to screen directed down
+}
+
+// Magnetometer
+var magneticField: CMCalibratedMagneticField
+struct CMCalibratedMagneticField  {
+    var field: CMMagneticField
+    var accuracy: CMMagneticFieldCalibrationAccuracy
+}
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
+##
+```swift
+```
+
 ##
 ```swift
 ```
