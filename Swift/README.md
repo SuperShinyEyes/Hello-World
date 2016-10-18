@@ -1416,8 +1416,10 @@ struct CMCalibratedMagneticField  {
 }
 ```
 
-##
+## NSNotificationCenter
 ```swift
+NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: .UIApplicationWillEnterForeground, object: nil)
+NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
 ```
 
 ##
