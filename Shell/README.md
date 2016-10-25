@@ -4,12 +4,12 @@ du -sh      // Current directory
 du -sh ~    // Home directory
 du -sh *    // Item-wise inside directory
 
-df -h       // Entire file system 
+df -h       // Entire file system
 ```
 
-##
+## Print via ssh
 ```bash
-
+ssh parks1@kosh.aalto.fi lpr -P secureprintps < filename
 ```
 
 ### Find IP and MAC addresses of devices in the network
