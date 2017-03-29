@@ -8,7 +8,7 @@ a = pi      %  3.1416
 ```
 
 ## Vectors
-```
+```Matlab
 >> A = [1 2; 3 4;5 4]
 A =
      1     2
@@ -137,13 +137,13 @@ ans =
 ```
 
 ![histogram](/images/matlab_histogram.png)
-```
->> hist(rand(1,1000), 100)
+```Matlab
+hist(rand(1,1000), 100)
 ```
 
 
 ## Moving around
-```
+``` Matlab
 >> pwd
 ans =
 /Users/young/Documents/MATLAB
@@ -169,7 +169,7 @@ ans =
 ```
 
 ## Computation
-```
+``` Matlab
 >> A = [1 2; 3 4; 5 6]
 A =
      1     2
@@ -303,13 +303,13 @@ ans =
 ```
 ## Plot
 ![plot sin](/images/matlab_plot.png)
-```
+``` Matlab
 >> t = [0:0.01:1];
 >> y1 = sin(2*pi*5*t);
 >> plot(t, y1)
 ```
 ![plot sin](/images/matlab_plot2.png)
-```
+``` Matlab
 >> y2 = cos(2*pi*5*t)/2;
 >> hold on
 >> plot(t, y2, 'r')
@@ -321,7 +321,7 @@ ans =
 >> close      % close figure
 ```
 ![plot sin](/images/matlab_plot3.png)
-```
+``` Matlab
 >> figure(1); plot(t, y1);
 >> figure(2); plot(t, y2);
 >> subplot(1,2,1);
@@ -331,7 +331,7 @@ ans =
 >> axis([0.5, 1, -1, 1])    % Change range in plot
 ```
 ![plot sin](/images/matlab_plot4.png)
-```
+``` Matlab
 >> A = magic(5)
 A =
     17    24     1     8    15
@@ -343,7 +343,7 @@ A =
 ```
 
 ## For-loop, while
-```
+``` Matlab
 >> v = zeros(5, 1)
 v =
      0
@@ -382,7 +382,7 @@ v =
 ```
 
 ## functions
-```
+``` Matlab
 function J = costFunctionJ(X, y, theta)
 
 m = size(X, 1);             % num of training examples
@@ -392,21 +392,110 @@ sqrErrors = (predictions - y) .^ 2;
 
 J = 1 / (2*m) * sum(sqrErrors)
 ```
+## Image Processing
+![jiyu_1](/images/jiyu_1.png)
+``` Matlab
+im = imread('jiyu.jpg');
+imgreen = im(:,:,2);  % M x N x 3 array for color images
+imshow(imgreen)
+line([1 512], [256,256], 'color', 'r')
+
+size(im)
+% ans =    4288        2848           3
+class(im)    
+% uint8
+```
+![jiyu_plot](/images/jiyu_plot.png)
+``` Matlab
+plot(imgreen(500, :))
+```
+
+## Generate Gaussian noise
+![gaussian_normal_distribution](/images/gaussian_normal_distribution.png)
+``` Matlab
+noise = randn([1 100000]);
+[n, x] = hist(noise, linspace(-3, 3, 201));
+% [n, x] = hist(noise, [-3 -2 -1 0 1 2 3]);
+plot(x, n);
+```
+
+- randn: Normal distribution with standard deviation 1
+- rand: Uniform distribution
+- randi: Integers from Uniform distribution
+
+## Convert array of doubles to int
+``` Matlab
+function output = gaussian_noise_cv(img)
+    noise = randn(size(img)) * 64;
+    noiseInt = arrayfun(@uint8, noise);
+    output = img + noiseInt;
+end
+
+```
+
+## Apply filter to an image
+
+| original | gaussian blurred |
+|---|---|
+|![koala](/images/koala.png)|![koala_gaussian](/images/koala_gaussian.png)|
+
+``` Matlab
+hsize = 31;
+sigma = 5;
+h = fspecial('gaussian', hsize, sigma);
+
+surf(h);
+imagesc(h);
+outim = imfilter(im, h);
+imshow(outim);
+```
+## Gaussian noise vs. Gaussian filter
+![two_gaussians](/images/two_gaussians.png)
+
+## Boundary issues
+| methods | output |
+|---|---|
+|clip filter(black)|![boundary_clipped](/images/boundary_clipped.png)|
+| wrap around(circular) | ![circular](/images/boundary_circular.png) |
+| replicate | ![replicate](/images/boundary_replicate.png) |
+| symmetric | ![symmetric](/images/boundary_symmetric.png) |
+``` Matlab
+clipped = imfilter(im, h, 'circular');
+imfilter(im, h, 'replicate');
+imfilter(im, h, 'symmetric');
+```
+
 ##
+``` Matlab
+
 ```
-```
+
 ##
+``` Matlab
+
 ```
-```
+
 ##
+``` Matlab
+
 ```
-```
+
 ##
+``` Matlab
+
 ```
-```
+
 ##
+``` Matlab
+
 ```
-```
+
 ##
+``` Matlab
+
 ```
+
+##
+``` Matlab
+
 ```
